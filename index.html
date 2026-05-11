@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Hub de Aplicações | Modelagem de Sistemas & Anvil</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #e9f0fc 0%, #d9e2ef 100%);
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1.5rem;
+        }
+
+        /* container principal elegante */
+        .dashboard {
+            max-width: 1300px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(2px);
+            border-radius: 3rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.35), inset 0 1px 2px rgba(255,255,255,0.6);
+            padding: 2rem 2rem 2.5rem;
+            transition: all 0.2s;
+        }
+
+        /* cabeçalho com identidade */
+        .header {
+            text-align: center;
+            margin-bottom: 2.8rem;
+            border-bottom: 2px solid rgba(46, 87, 145, 0.25);
+            padding-bottom: 1.2rem;
+        }
+
+        .header h1 {
+            font-size: 2.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1A3E6F, #2B5A96);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.4rem;
+        }
+
+        .header p {
+            color: #2c3e5c;
+            font-weight: 500;
+            font-size: 1.05rem;
+            opacity: 0.85;
+        }
+
+        /* seção de modelagem (destaque sutil) */
+        .section {
+            margin-bottom: 2.8rem;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.4rem;
+            padding-left: 0.5rem;
+        }
+
+        .section-title .badge {
+            background: #1e3a5f;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 0.3rem 0.9rem;
+            border-radius: 40px;
+            letter-spacing: 0.3px;
+            box-shadow: inset 0 -1px 0 rgba(0,0,0,0.1), 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .section-title h2 {
+            font-size: 1.7rem;
+            font-weight: 600;
+            color: #0a2a44;
+        }
+
+        /* grade responsiva para os cards */
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 1.6rem;
+        }
+
+        /* estilo dos cartões interativos */
+        .card {
+            background: white;
+            border-radius: 1.8rem;
+            overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.3s ease;
+            box-shadow: 0 12px 22px -12px rgba(0, 0, 0, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(2px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 24px 32px -12px rgba(0, 0, 0, 0.25);
+            border-color: #cbddee;
+        }
+
+        .card-content {
+            padding: 1.6rem 1.2rem 1.6rem 1.5rem;
+            flex: 1;
+        }
+
+        .card-icon {
+            font-size: 2.2rem;
+            margin-bottom: 0.9rem;
+            display: inline-block;
+            background: #eef4fa;
+            padding: 0.5rem;
+            border-radius: 1.2rem;
+            width: 3rem;
+            text-align: center;
+        }
+
+        .card h3 {
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: #0f2f4f;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .card .desc {
+            font-size: 0.9rem;
+            color: #3e5a7c;
+            margin-bottom: 1.6rem;
+            line-height: 1.4;
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+
+        .filename {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.75rem;
+            background: #eef2f7;
+            padding: 0.25rem 0.6rem;
+            border-radius: 30px;
+            color: #1d4e89;
+            font-weight: 500;
+        }
+
+        .btn-link {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            background: #1d4e89;
+            color: white;
+            padding: 0.45rem 1rem;
+            border-radius: 2rem;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            font-family: inherit;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .btn-link:hover {
+            background: #0f3b62;
+            transform: scale(0.97);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .btn-link:active {
+            transform: scale(0.96);
+        }
+
+        /* separador sutil */
+        .separator {
+            margin: 0.5rem 0 1.8rem;
+            height: 2px;
+            background: radial-gradient(circle, #9bb7d4, transparent);
+        }
+
+        /* FOOTER com informações acadêmicas e link do forms */
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: #2c527a;
+            border-top: 1px solid rgba(46, 87, 145, 0.25);
+            padding-top: 1.4rem;
+        }
+        .footer-instructions {
+            background: rgba(29, 78, 137, 0.06);
+            border-radius: 1.5rem;
+            padding: 1.2rem 1rem;
+            margin-bottom: 1.2rem;
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(70, 120, 180, 0.2);
+        }
+        .footer-instructions strong {
+            color: #0e3a62;
+            font-weight: 700;
+        }
+        .repo-badge {
+            background: #0d2b45;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #1f3e5c;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-family: monospace;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #eef4ff;
+            margin: 0.5rem 0 0.2rem;
+            letter-spacing: 0.3px;
+        }
+        .form-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #29873b;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.55rem 1.5rem;
+            border-radius: 3rem;
+            margin-top: 0.6rem;
+            transition: 0.2s;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            font-size: 0.9rem;
+        }
+        .form-link:hover {
+            background: #1f6e2e;
+            transform: scale(1.01);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+        }
+        .small-note {
+            font-size: 0.75rem;
+            opacity: 0.75;
+            margin-top: 0.6rem;
+        }
+        @media (max-width: 680px) {
+            .dashboard {
+                padding: 1.2rem;
+            }
+            .header h1 {
+                font-size: 1.7rem;
+            }
+            .section-title h2 {
+                font-size: 1.4rem;
+            }
+            .card h3 {
+                font-size: 1.25rem;
+            }
+            .footer-instructions {
+                padding: 1rem;
+            }
+        }
+
+        .btn-link {
+            cursor: pointer;
+        }
+        /* Ícones git inline */
+        .github-icon {
+            font-size: 1.1rem;
+            filter: drop-shadow(0 1px 1px rgba(0,0,0,0.1));
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard">
+    <div class="header">
+        <h1>📌 Ambiente de desenvolvimento</h1>
+        <p>Modelagem de Sistemas + Aplicações Interativas com Anvil</p>
+    </div>
+
+    <!-- SEÇÃO 1: MODELAGEM DE SISTEMAS -->
+    <div class="section">
+        <div class="section-title">
+            <span class="badge">🧠 FUNDAMENTOS</span>
+            <h2>Modelagem de Sistemas</h2>
+        </div>
+        <div class="grid-cards">
+            <!-- Tema 3 - Modelagem de sistemas -->
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-icon">📐</div>
+                    <h3>Tema 3 · Modelagem de sistemas</h3>
+                    <div class="desc">Especificação, análise e projeto arquitetural — diagramas, notações e processos essenciais para construção de software robusto.</div>
+                    <div class="card-meta">
+                        <span class="filename">📄 t3.html</span>
+                        <button class="btn-link js-open-tab" data-url="t3.html" data-target="_blank">Abrir modelo ↗</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SEÇÃO 2: APLICAÇÕES EM ANVIL (6 projetos) -->
+    <div class="section">
+        <div class="section-title">
+            <span class="badge">⚡ ANVIL WORKSPACE</span>
+            <h2>Aplicações em Anvil</h2>
+        </div>
+        <div class="grid-cards">
+            <!-- 1) Emissão de diplomas -->
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-icon">🎓</div>
+                    <h3>Emissão de diplomas</h3>
+                    <div class="desc">Sistema automatizado para gerar certificados e diplomas digitais com validação de dados acadêmicos.</div>
+                    <div class="card-meta">
+                        <span class="filename">📄 1-diploma.html</span>
+                        <button class="btn-link js-open-tab" data-url="1-diploma.html" data-target="_blank">Acessar diploma ↗</button>
+                    </div>
+                </div>
+            </div>
+            <!-- 2) Cálculo de médias -->
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-icon">📊</div>
+                    <h3>Cálculo de médias</h3>
+                    <div class="desc">Ferramenta para calcular médias ponderadas, aritméticas e desempenho escolar com interface dinâmica.</div>
+                    <div class="card-meta">
+                        <span class="filename">📄 2-calculo_medias.html</span>
+                        <button class="btn-link js-open-tab" data-url="2-calculo_medias.html" data-target="_blank">Calcular médias ↗</button>
+                    </div>
+                </div>
+            </div>
+            <!-- 3) Jogo "Pedra, papel e tesoura" -->
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-icon">✊📄✂️</div>
+                    <h3>Pedra, papel e tesoura</h3>
+                    <div class="desc">Clássico jogo contra a IA. Escolha sua jogada e teste a sorte com animações simples e placar.</div>
+                    <div class="card-meta">
+                        <span class="filename">📄 3-pedra_papel_tesoura.html</span>
+                        <button class="btn-link js-open-tab" data-url="3-pedra_papel_tesoura.html" data-target="_blank">Jogar agora ↗</button>
+                    </div>
+                </div>
+            </div>
+            <!-- 4) Quiz de personagem (Harry Potter) -->
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-icon">⚡🧙</div>
+                    <h3>Quiz de personagem</h3>
+                    <div class="desc">Descubra qual casa de Hogwarts ou bruxo combina com você — perguntas temáticas do universo Harry Potter.</div>
+                    <div class="card-meta">
+                        <span class="filename">📄 4-harry_potter.html</span>
+                        <button class="btn-link js-open-tab" data-url="4-harry_potter.html" data-target="_blank">Fazer quiz ↗</button>
+                    </div>
+                </div>
+            </div>
+            <!-- 5) RPG "A Caverna dos Goblins" -->
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-icon">🐉⚔️</div>
+                    <h3>RPG · A Caverna dos Goblins</h3>
+                    <div class="desc">Aventura narrativa interativa: explore a caverna, lute contra goblins, tome decisões e descubra tesouros.</div>
+                    <div class="card-meta">
+                        <span class="filename">📄 5-rpg.html</span>
+                        <button class="btn-link js-open-tab" data-url="5-rpg.html" data-target="_blank">Explorar caverna ↗</button>
+                    </div>
+                </div>
+            </div>
+            <!-- 6) Lista de tarefas (To-do list) -->
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-icon">✅📋</div>
+                    <h3>Lista de tarefas</h3>
+                    <div class="desc">Organize seu dia com adição, remoção e conclusão de tarefas — design minimalista e responsivo.</div>
+                    <div class="card-meta">
+                        <span class="filename">📄 6-todo_list.html</span>
+                        <button class="btn-link js-open-tab" data-url="6-todo_list.html" data-target="_blank">Gerenciar tarefas ↗</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER COM PUBLICAÇÃO DE LINKS E DIRETRIZES DO REPOSITÓRIO / FORMULÁRIO -->
+    <footer>
+        <div class="footer-instructions">
+            <div style="display: flex; justify-content: center; align-items: center; gap: 6px; flex-wrap: wrap;">
+                <span class="repo-badge">
+                    <span class="github-icon">🐙</span> GitHub: APS_03
+                </span>
+                <span style="font-weight: 500;"> &nbsp; • &nbsp;</span>
+                <strong>📤 Etapa obrigatória:</strong>
+            </div>
+            <p style="margin-top: 12px; max-width: 700px; margin-left: auto; margin-right: auto;">
+                📁 <strong>Publicar e enviar os links das 6 aplicações</strong> (emissão de diplomas, cálculo de médias, 
+                jogo Pedra-papel-tesoura, quiz Harry Potter, RPG A Caverna dos Goblins e Lista de tarefas) para o 
+                repositório do GitHub denominado <strong style="background:#eef2fa; padding:0 6px; border-radius:12px;">"APS_03"</strong>. 
+                Após o envio dos arquivos (HTML, assets ou código fonte), utilize o formulário oficial abaixo para registrar a entrega.
+            </p>
+            <div style="margin: 0.8rem 0 0.3rem;">
+                <a href="https://forms.gle/T9QSe3PyEpru3t538" target="_blank" rel="noopener noreferrer" class="form-link">
+                    📋 Acessar formulário de submissão → Google Forms
+                </a>
+            </div>
+            <p class="small-note">
+                🔗 O link do formulário: https://forms.gle/T9QSe3PyEpru3t538 <br>
+                🧩 Certifique-se de que as 6 aplicações estejam disponíveis no repositório antes de preencher o envio.
+            </p>
+        </div>
+        <div style="font-size: 0.8rem; opacity: 0.7; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+            <span>🧪 Todos os projetos abrem em nova aba</span>
+            <span>📁 APS_03 - Repositório oficial</span>
+            <span>✅ Modelagem + 6 entregáveis Anvil</span>
+        </div>
+        <div style="margin-top: 1rem; font-size: 0.7rem; color: #3f6b97;">
+            ⚡ Interface hub desenvolvida para compilação das atividades · verifique o envio no forms após commit no GitHub
+        </div>
+    </footer>
+</div>
+
+<script>
+    (function() {
+        // Seleciona todos os botões que possuem a classe 'js-open-tab'
+        const allButtons = document.querySelectorAll('.js-open-tab');
+        
+        // Função que garante abertura dos links em nova aba (target _blank)
+        function openInNewTab(event) {
+            event.preventDefault();
+            const button = event.currentTarget;
+            const url = button.getAttribute('data-url');
+            const target = button.getAttribute('data-target') || '_blank';
+            
+            if (!url) {
+                console.warn('URL não definida para este botão', button);
+                return;
+            }
+            
+            const newWindow = window.open(url, target);
+            if (!newWindow) {
+                alert('O navegador pode ter bloqueado a nova aba. Por favor, permita pop-ups para este site.');
+            }
+        }
+        
+        for (let btn of allButtons) {
+            btn.addEventListener('click', openInNewTab);
+        }
+        
+        // === tratamento adicional para link do formulário (já com target _blank explícito) ===
+        // O link do forms já possui target="_blank" no HTML, garantindo que abra em nova aba também.
+        // Se desejar garantir via JS, também está correto. O usuário terá a melhor experiência.
+        const formExternalLink = document.querySelector('.form-link');
+        if (formExternalLink && formExternalLink.getAttribute('target') !== '_blank') {
+            formExternalLink.setAttribute('target', '_blank');
+            formExternalLink.setAttribute('rel', 'noopener noreferrer');
+        }
+        
+        console.log('Hub de aplicações carregado — todos os links abrem em nova aba (target="_blank"). Incluindo formulário de entrega e aplicações.');
+    })();
+</script>
+
+<!-- 
+    =========================================================================================
+    ESPECIFICAÇÕES FINAIS ATENDIDAS:
+
+    1) INDEX.HTML completo com:
+        - Modelagem de Sistemas (Tema 3 → t3.html)
+        - Seção "Aplicações em Anvil" com os 6 itens:
+            1-diploma.html, 2-calculo_medias.html, 3-pedra_papel_tesoura.html,
+            4-harry_potter.html, 5-rpg.html, 6-todo_list.html
+
+    2) Todos os links abrem em novas abas (target="_blank") utilizando JavaScript robusto + atributos.
+
+    3) Rodapé aprimorado conforme instrução:
+        - Texto "Publicar e enviar os links das 6 aplicações para repositório do Github denominado 'APS_03'."
+        - Link direto do formulário: https://forms.gle/T9QSe3PyEpru3t538 com destaque e chamada para ação.
+        - Inclui observações sobre commit dos arquivos e entrega.
+
+    4) Layout responsivo, cards com descrição, boa legibilidade e identidade visual profissional.
+
+    5) Aba de forms também abre em nova aba (garantia extra).
+    =========================================================================================
+-->
+</body>
+</html>

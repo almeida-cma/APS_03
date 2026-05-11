@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANVIL WORKS - RPG de Texto</title>
+    <style>
+        :root {
+            /* Paleta RPG / Dark Fantasy */
+            --primary: #2b2b36;
+            --secondary: #181820;
+            --accent: #e0a96d; /* Ouro envelhecido */
+            --danger: #c24040; /* Vermelho sangue */
+            --success: #528c64; /* Verde musgo */
+            --info: #4a7c96; /* Azul aço */
+            --dark: #0d0d12;
+            --light: #dfdfd4; /* Pergaminho */
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--dark) 100%);
+            color: var(--light);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: rgba(13, 13, 18, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+            margin-bottom: 2rem;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        .header h1 {
+            color: var(--accent);
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 15px rgba(224, 169, 109, 0.3);
+            font-family: 'Courier New', Courier, monospace;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .header p { color: #888; font-size: 1.2rem; font-weight: 500; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem 3rem 2rem; }
+
+        /* Seções */
+        .section {
+            background: var(--primary); border-radius: 10px; margin-bottom: 2.5rem;
+            overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: transform 0.3s ease;
+            border: 1px solid #3a3a48;
+        }
+        .section:hover { transform: translateY(-3px); border-color: var(--accent); }
+
+        .section-title {
+            background: var(--dark);
+            color: var(--accent); padding: 1.2rem 2rem; font-size: 1.4rem; font-weight: bold;
+            display: flex; align-items: center; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid #3a3a48;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .section-title span {
+            background: var(--accent); color: var(--dark); padding: 0.3rem 1rem;
+            border-radius: 4px; font-size: 0.85rem; margin-left: auto; font-weight: bold;
+        }
+
+        .section-content { padding: 2rem; color: #ccc; }
+
+        /* Cards */
+        .requirements-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+        .card {
+            background: var(--secondary); border-top: 3px solid var(--accent); padding: 1.5rem;
+            border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: all 0.3s ease;
+        }
+        .card:hover { transform: translateY(-5px); background: #1f1f2a; box-shadow: 0 8px 15px rgba(224,169,109,0.1); }
+        .card h3 { color: var(--accent); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 10px; }
+
+        /* Tabelas */
+        .rule-table { width: 100%; border-collapse: collapse; border-radius: 6px; overflow: hidden; background: var(--secondary); }
+        .rule-table th, .rule-table td { border: 1px solid #3a3a48; padding: 1rem; text-align: left; font-size: 1.1rem; }
+        .rule-table th { background: var(--dark); color: var(--accent); font-weight: 600; text-align: center; }
+
+        /* Fluxo */
+        .flow {
+            background: var(--secondary); padding: 2rem; border-radius: 6px; text-align: center;
+            font-family: 'Courier New', monospace; font-size: 1.1rem; font-weight: bold;
+            color: var(--accent); border: 1px dashed #3a3a48; line-height: 2;
+        }
+
+        /* Mockup do App */
+        .layout-visual {
+            background: repeating-linear-gradient(45deg, #0d0d12, #0d0d12 10px, #121218 10px, #121218 20px);
+            border-radius: 10px; padding: 3rem 2rem; position: relative; display: flex; justify-content: center;
+            border: 2px solid #3a3a48;
+        }
+        .modern-app { background: var(--dark); border-radius: 8px; padding: 0; width: 100%; max-width: 600px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); border: 2px solid var(--accent); overflow: hidden; }
+        
+        .status-bar { display: flex; justify-content: space-between; background: #1a1a24; padding: 10px 20px; border-bottom: 2px solid #3a3a48; font-family: 'Courier New', monospace; font-weight: bold; }
+        .stat-hp { color: var(--danger); }
+        .stat-sp { color: var(--info); }
+        .stat-item { color: var(--accent); }
+
+        .story-area { padding: 30px 20px; text-align: center; font-size: 1.2rem; min-height: 150px; display: flex; align-items: center; justify-content: center; color: var(--light); font-style: italic; }
+        
+        .action-area { background: #1a1a24; padding: 20px; border-top: 2px solid #3a3a48; display: flex; flex-direction: column; gap: 10px; }
+        
+        .action-btn {
+            width: 100%; padding: 12px; background: var(--primary); color: var(--light); border: 1px solid #4a4a5a;
+            border-radius: 4px; font-size: 1rem; cursor: pointer; text-align: left; transition: 0.2s;
+        }
+        .action-btn:hover { background: #3a3a48; border-color: var(--accent); color: var(--accent); padding-left: 20px; }
+
+        /* Componentes Dropdown */
+        .component-list { display: flex; flex-direction: column; gap: 1rem; }
+        .component-item { border: 1px solid #3a3a48; border-radius: 6px; overflow: hidden; }
+        .component-header { background: var(--secondary); padding: 1rem 1.5rem; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--accent); }
+        .component-props { padding: 0; display: none; background: var(--primary); }
+        .component-props.active { display: block; }
+        .props-table { width: 100%; border-collapse: collapse; }
+        .props-table td { padding: 0.8rem 1.5rem; border-bottom: 1px solid #3a3a48; }
+        .props-table td:first-child { font-weight: 600; width: 35%; color: var(--light); }
+        .props-table td:last-child { color: var(--accent); font-family: monospace; font-size: 1.05rem;}
+
+        /* Código */
+        .code-block { background: #0f0f14; border-radius: 8px; overflow: hidden; border: 1px solid #3a3a48; }
+        .code-header { background: #1a1a24; color: var(--light); padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #3a3a48; font-family: monospace; }
+        .code-content { padding: 1.5rem; overflow-x: auto; }
+        .code-content pre { margin: 0; font-family: 'Consolas', monospace; font-size: 0.95rem; line-height: 1.6; color: #ce9178; }
+        .code-content pre .keyword { color: #c678dd; } 
+        .code-content pre .comment { color: #5c6370; font-style: italic; } 
+        .code-content pre .function { color: #61afef; } 
+        .code-content pre .string { color: #98c379; } 
+        .code-content pre .dict-key { color: #d19a66; } 
+        
+        .copy-btn { background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 0.4rem 1rem; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .copy-btn:hover { background: var(--accent); color: var(--dark); }
+
+        .summary-box { background: var(--secondary); color: var(--light); padding: 3rem; border-radius: 10px; text-align: center; border: 2px solid var(--success); }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .summary-item { background: var(--primary); padding: 1rem; border-radius: 6px; border-left: 4px solid var(--success); font-weight: 500; text-align: left; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⚔️ A Caverna dos Goblins</h1>
+        <p>Guia Didático Completo - Criando um RPG Textual Baseado em Estados no Anvil</p>
+    </div>
+
+    <div class="container">
+        
+        <!-- ETAPA 1 -->
+        <div class="section">
+            <div class="section-title">
+                ✅ ETAPA 1 — REQUISITOS FUNCIONAIS
+                <span>Pilares do RPG</span>
+            </div>
+            <div class="section-content">
+                <div class="requirements-grid">
+                    <div class="card">
+                        <h3>📊 RF01 - Estado do Jogo</h3>
+                        <p>O aplicativo deve rastrear constantemente os <i>Status</i> do jogador: Vida (10), Energia (8), Chave (Sim/Não) e a Fase atual.</p>
+                    </div>
+                    <div class="card">
+                        <h3>📜 RF02 - Narrativa Dinâmica</h3>
+                        <p>Um Label central deve exibir a história, mudando o texto de acordo com a Fase (Stage) atual.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🔘 RF03 - Botões Mutáveis</h3>
+                        <p>As ações disponíveis (botões) devem ser destruídas e recriadas a cada tela, refletindo as escolhas da fase.</p>
+                    </div>
+                    <div class="card">
+                        <h3>⚖️ RF04 - Consequências</h3>
+                        <p>Se Vida ou Energia chegar a 0, Game Over. Se tiver a Chave na porta final, Vitória. Um botão "Reiniciar" deve limpar o estado.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 2 -->
+        <div class="section">
+            <div class="section-title">
+                📋 ETAPA 2 — REGRAS DE NEGÓCIO (DATA DRIVEN)
+                <span>O Mapa do Jogo</span>
+            </div>
+            <div class="section-content">
+                <p style="margin-bottom: 1rem;">Em vez de usar dezenas de `ifs`, vamos criar uma base de dados interna no Python (Dicionário) que dita como o jogo funciona:</p>
+                <table class="rule-table">
+                    <thead>
+                        <tr><th>Fase (Stage)</th><th>Opção Escolhida</th><th>Custo Vida/Energia</th><th>Itens Ganhos</th><th>Próxima Fase</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td rowspan="2"><b>entrada</b></td><td>Explorar túnel úmido</td><td>Energia -2</td><td>Chave (Sim)</td><td>tunel</td></tr>
+                        <tr><td>Ir para o salão escuro</td><td>Vida -3 / Energia -1</td><td>Nenhum</td><td>salao</td></tr>
+                        <tr><td><b>tunel</b></td><td>Voltar para entrada</td><td>Energia -1</td><td>Nenhum</td><td>entrada</td></tr>
+                        <tr><td rowspan="2"><b>salao</b></td><td>Tentar abrir Porta Final</td><td>Energia -1</td><td>Depende da Chave</td><td>vitoria (se tiver chave)<br>game_over (se não)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ETAPA 3 -->
+        <div class="section">
+            <div class="section-title">
+                🔄 ETAPA 3 — FLUXO DO SISTEMA
+                <span>A Máquina de Estados</span>
+            </div>
+            <div class="section-content">
+                <div class="flow">
+                    Ao abrir o app, chama o reset_game()<br>
+                    ⬇<br>
+                    update_story() -> Lê o dicionário na fase atual e atualiza texto<br>
+                    ⬇<br>
+                    render_actions() -> Limpa painel e desenha novos botões baseados no banco<br>
+                    ⬇<br>
+                    update_ui() -> Mostra Vida, Energia e Chave na tela<br>
+                    ⬇<br>
+                    <i>** JOGADOR CLICA EM UM BOTÃO **</i><br>
+                    ⬇<br>
+                    apply_consequence(escolha) -> Subtrai pontos, verifica morte, muda a fase e reinicia ciclo
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 4 -->
+        <div class="section">
+            <div class="section-title">
+                🎨 ETAPA 4 — PROJETO DA INTERFACE
+                <span>Aesthetics Retro</span>
+            </div>
+            <div class="section-content">
+                <div class="layout-visual">
+                    <div class="modern-app">
+                        <!-- Barra de Status Superior -->
+                        <div class="status-bar">
+                            <span class="stat-hp">❤️ Vida: 10</span>
+                            <span class="stat-sp">⚡ Energia: 8</span>
+                            <span class="stat-item">🗝️ Chave: Não</span>
+                        </div>
+
+                        <!-- Área da História -->
+                        <div class="story-area">
+                            "Você está na entrada de uma caverna fria e escura. Você ouve água pingando à esquerda e rosnados à frente."
+                        </div>
+
+                        <!-- Área de Botões (Componente Mutável) -->
+                        <div class="action-area">
+                            <button class="action-btn">> Explorar o túnel à esquerda</button>
+                            <button class="action-btn">> Entrar no salão escuro (Aviso de perigo)</button>
+                            
+                            <button class="action-btn" style="background: #4a1f1f; color: #ff9999; text-align: center; margin-top: 15px;">🔄 REINICIAR AVENTURA</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 5 -->
+        <div class="section">
+            <div class="section-title">
+                🧩 ETAPA 5 — COMPONENTES DO ANVIL
+                <span>Configurando o Painel Dinâmico</span>
+            </div>
+            <div class="section-content">
+                <p style="margin-bottom: 1rem;">Neste app, nós <b>NÃO</b> criamos os botões de opções arrastando no Anvil. Nós criamos um "Container" vazio (LinearPanel), e o Python injeta botões dentro dele automaticamente!</p>
+                
+                <div class="component-list">
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            1️⃣ Labels de Status (Interface Superior) <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Componentes</td><td>Label (Criar 3 unidades)</td></tr>
+                                <tr><td>Names</td><td>lbl_vida / lbl_energia / lbl_chave</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            2️⃣ O Narrador (Label Principal) <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Componente</td><td>Label</td></tr>
+                                <tr><td>Name</td><td>lbl_historia</td></tr>
+                                <tr><td>Propriedades</td><td>Align=Center / Font Size=18</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            3️⃣ Contêiner de Botões (LinearPanel) <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Componente</td><td>LinearPanel</td></tr>
+                                <tr><td>Name</td><td>painel_botoes</td></tr>
+                                <tr><td>Explicação</td><td>Deixe-o VAZIO. O código Python colocará os botões nele.</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            4️⃣ Botão de Reset Fixo (Button) <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Componente</td><td>Button</td></tr>
+                                <tr><td>Name</td><td>btn_reiniciar</td></tr>
+                                <tr><td>Evento 'click'</td><td>Criará a função <code>btn_reiniciar_click</code> no Python</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 6 -->
+        <div class="section">
+            <div class="section-title">
+                ⚡ ETAPA 6 — CRIANDO O EVENTO DINÂMICO
+                <span>Como os botões virtuais ganham vida?</span>
+            </div>
+            <div class="section-content">
+                <div class="card" style="border-left-color: var(--info);">
+                    <p>Como os botões de ação são gerados pelo Python, não podemos clicar neles na aba Design para gerar um evento.</p>
+                    <p style="margin-top: 10px;">Na Etapa 7, você verá o comando: <code>novo_botao.set_event_handler('click', self.apply_consequence)</code>. Isso diz ao Anvil para capturar o clique do botão que acabamos de criar na memória e enviá-lo direto para nossa função de consequências!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 7 -->
+        <div class="section">
+            <div class="section-title">
+                💻 ETAPA 7 — CÓDIGO PYTHON COMPLETO
+                <span>Código Corrigido - Separação do Evento de Reset</span>
+            </div>
+            <div class="section-content">
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>📄 form1.py</span>
+                        <button class="copy-btn" onclick="copyCode()">📋 Copiar Código</button>
+                    </div>
+                    <div class="code-content">
+                        <pre id="full-code">
+<span class="keyword">from</span> anvil <span class="keyword">import</span> *
+
+<span class="keyword">class</span> Form1(Form1Template):
+  
+  <span class="keyword">def</span> <span class="function">__init__</span>(self, **properties):
+    self.init_components(**properties)
+    
+    <span class="comment"># === BASE DE DADOS DO JOGO (O MAPA DA HISTÓRIA) ===</span>
+    self.historia_db = {
+      <span class="string">"entrada"</span>: {
+        <span class="dict-key">"texto"</span>: <span class="string">"Você está na entrada de uma caverna fria. Ouça água e rosnados."</span>,
+        <span class="dict-key">"opcoes"</span>: [
+          {<span class="dict-key">"texto"</span>: <span class="string">"Explorar túnel úmido"</span>, <span class="dict-key">"prox_fase"</span>: <span class="string">"tunel"</span>, <span class="dict-key">"vida"</span>: 0, <span class="dict-key">"energia"</span>: -2, <span class="dict-key">"chave"</span>: <span class="keyword">True</span>},
+          {<span class="dict-key">"texto"</span>: <span class="string">"Ir para o salão escuro"</span>, <span class="dict-key">"prox_fase"</span>: <span class="string">"salao"</span>, <span class="dict-key">"vida"</span>: -3, <span class="dict-key">"energia"</span>: -1, <span class="dict-key">"chave"</span>: <span class="keyword">False</span>}
+        ]
+      },
+      <span class="string">"tunel"</span>: {
+        <span class="dict-key">"texto"</span>: <span class="string">"Você escorregou! Mas achou uma Chave Dourada na lama. É um beco sem saída."</span>,
+        <span class="dict-key">"opcoes"</span>: [
+          {<span class="dict-key">"texto"</span>: <span class="string">"Voltar para a entrada"</span>, <span class="dict-key">"prox_fase"</span>: <span class="string">"entrada"</span>, <span class="dict-key">"vida"</span>: 0, <span class="dict-key">"energia"</span>: -1, <span class="dict-key">"chave"</span>: <span class="keyword">False</span>}
+        ]
+      },
+      <span class="string">"salao"</span>: {
+        <span class="dict-key">"texto"</span>: <span class="string">"Um Goblin lhe atacou no escuro! Você corre para a grande Porta Final."</span>,
+        <span class="dict-key">"opcoes"</span>: [
+          {<span class="dict-key">"texto"</span>: <span class="string">"Tentar abrir a fechadura"</span>, <span class="dict-key">"prox_fase"</span>: <span class="string">"verificar_porta"</span>, <span class="dict-key">"vida"</span>: 0, <span class="dict-key">"energia"</span>: -1, <span class="dict-key">"chave"</span>: <span class="keyword">False</span>}
+        ]
+      }
+    }
+    
+    <span class="comment"># Inicia a primeira partida automaticamente quando o App abre</span>
+    self.reset_game()
+
+  <span class="comment"># ==========================================
+  # EVENTOS DA INTERFACE (Aba Design do Anvil)
+  # ==========================================</span>
+  
+  <span class="comment"># Evento gerado ao clicar no botão btn_reiniciar</span>
+  <span class="keyword">def</span> <span class="function">btn_reiniciar_click</span>(self, **event_args):
+    <span class="comment"># Apenas chama a lógica de reset isolada abaixo</span>
+    self.reset_game()
+
+
+  <span class="comment"># ==========================================
+  # LÓGICA DO JOGO (Funções Internas)
+  # ==========================================</span>
+
+  <span class="comment"># 1. FUNÇÃO DE REINÍCIO</span>
+  <span class="keyword">def</span> <span class="function">reset_game</span>(self):
+    <span class="comment"># Dicionário de Estado do Jogo atual (game_state)</span>
+    self.game_state = {
+      <span class="dict-key">"stage"</span>: <span class="string">"entrada"</span>,
+      <span class="dict-key">"life"</span>: 10,
+      <span class="dict-key">"energy"</span>: 8,
+      <span class="dict-key">"has_key"</span>: <span class="keyword">False</span>
+    }
+    self.painel_botoes.visible = <span class="keyword">True</span>
+    self.atualizar_tudo()
+
+  <span class="comment"># 2. FUNÇÃO CONTROLADORA GERAL</span>
+  <span class="keyword">def</span> <span class="function">atualizar_tudo</span>(self):
+    self.update_ui()
+    self.update_story()
+    self.render_actions()
+
+  <span class="comment"># 3. ATUALIZAR STATUS (VISUAL)</span>
+  <span class="keyword">def</span> <span class="function">update_ui</span>(self):
+    self.lbl_vida.text = <span class="string">f"❤️ Vida: {self.game_state['life']}"</span>
+    self.lbl_energia.text = <span class="string">f"⚡ Energia: {self.game_state['energy']}"</span>
+    
+    texto_chave = <span class="string">"Sim"</span> <span class="keyword">if</span> self.game_state['has_key'] <span class="keyword">else</span> <span class="string">"Não"</span>
+    self.lbl_chave.text = <span class="string">f"🗝️ Chave: {texto_chave}"</span>
+
+  <span class="comment"># 4. ATUALIZAR NARRATIVA</span>
+  <span class="keyword">def</span> <span class="function">update_story</span>(self):
+    fase_atual = self.game_state['stage']
+    
+    <span class="comment"># Pega o texto da fase no Banco de Dados da História</span>
+    if fase_atual in self.historia_db:
+      self.lbl_historia.text = self.historia_db[fase_atual]["texto"]
+
+  <span class="comment"># 5. GERAR BOTÕES DINAMICAMENTE</span>
+  <span class="keyword">def</span> <span class="function">render_actions</span>(self):
+    <span class="comment"># Limpa botões da tela anterior</span>
+    self.painel_botoes.clear()
+    
+    fase_atual = self.game_state['stage']
+    
+    <span class="keyword">if</span> fase_atual <span class="keyword">in</span> self.historia_db:
+      opcoes_da_fase = self.historia_db[fase_atual]["opcoes"]
+      
+      <span class="comment"># Loop para criar um botão para cada opção disponível</span>
+      <span class="keyword">for</span> opcao <span class="keyword">in</span> opcoes_da_fase:
+        <span class="comment"># Cria o botão via código Python</span>
+        novo_botao = Button(text=<span class="string">"> "</span> + opcao["texto"], role=<span class="string">"primary-color"</span>)
+        
+        <span class="comment"># Salva a "consequência" dentro do próprio botão para usar depois (Truque de mestre!)</span>
+        novo_botao.tag = opcao
+        
+        <span class="comment"># Conecta o clique do botão à função apply_consequence</span>
+        novo_botao.set_event_handler(<span class="string">'click'</span>, self.apply_consequence)
+        
+        <span class="comment"># Adiciona o botão no painel visual da tela</span>
+        self.painel_botoes.add_component(novo_botao)
+
+  <span class="comment"># 6. APLICAR REGRAS APÓS O CLIQUE</span>
+  <span class="keyword">def</span> <span class="function">apply_consequence</span>(self, sender, **event_args):
+    <span class="comment"># 'sender' é o botão exato que o usuário clicou.</span>
+    <span class="comment"># Recuperamos a opção que salvamos na 'tag' dele.</span>
+    escolha = sender.tag
+    
+    <span class="comment"># Aplica matemáticas do Estado do Jogo</span>
+    self.game_state['life'] += escolha['vida']
+    self.game_state['energy'] += escolha['energia']
+    
+    <span class="keyword">if</span> escolha['chave']:
+      self.game_state['has_key'] = <span class="keyword">True</span>
+      
+    nova_fase = escolha['prox_fase']
+    
+    <span class="comment"># --- VERIFICAÇÕES DE FIM DE JOGO ---</span>
+    
+    <span class="comment"># Lógica Especial da Porta Final</span>
+    <span class="keyword">if</span> nova_fase == <span class="string">"verificar_porta"</span>:
+      <span class="keyword">if</span> self.game_state['has_key']:
+        self.lbl_historia.text = <span class="string">"✨ VITÓRIA! Você abriu a porta e fugiu com o tesouro! ✨"</span>
+      <span class="keyword">else</span>:
+        self.lbl_historia.text = <span class="string">"🔒 GAME OVER. A porta está trancada e os Goblins te alcançaram..."</span>
+      self.painel_botoes.visible = <span class="keyword">False</span>  <span class="comment"># Esconde as ações</span>
+      self.update_ui()
+      <span class="keyword">return</span> <span class="comment"># Encerra a função</span>
+      
+    <span class="comment"># Lógica de Morte por Status Zero</span>
+    <span class="keyword">if</span> self.game_state['life'] &lt;= 0 <span class="keyword">or</span> self.game_state['energy'] &lt;= 0:
+      self.game_state['life'] = max(0, self.game_state['life'])
+      self.lbl_historia.text = <span class="string">"💀 GAME OVER. Você desmaiou por exaustão ou ferimentos."</span>
+      self.painel_botoes.visible = <span class="keyword">False</span>
+      self.update_ui()
+      <span class="keyword">return</span>
+
+    <span class="comment"># Se não morreu, atualiza o status para a nova fase e recomeça o ciclo!</span>
+    self.game_state['stage'] = nova_fase
+    self.atualizar_tudo()
+</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 8 -->
+        <div class="section">
+            <div class="section-title">
+                📖 ETAPA 8 — EXPLICAÇÃO DETALHADA DO CÓDIGO
+                <span>Os Segredos do Data-Driven Design</span>
+            </div>
+            <div class="section-content">
+                <div class="requirements-grid">
+                    <div class="card">
+                        <h3>🔌 Separando o Evento da Lógica</h3>
+                        <p>O evento <code>btn_reiniciar_click</code> apenas chama a função interna <code>reset_game()</code>. Fazemos isso para poder chamar o <code>reset_game()</code> lá no topo da tela também (no <code>__init__</code>), sem precisar clicar em nada para o jogo começar. Isso se chama Reutilização de Código!</p>
+                    </div>
+                    <div class="card">
+                        <h3>📁 Dicionário `game_state`</h3>
+                        <p>No lugar de criar 4 variáveis soltas, agrupamos Vida, Energia, Chave e Fase num único dicionário. Isso mantém o "coração do jogo" organizado e fácil de debugar.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🗺️ O Mapa (historia_db)</h3>
+                        <p>A maior sacada aqui: separar a história do código. Temos um dicionário com todas as fases. Para adicionar novas salas, basta escrever no <code>historia_db</code> sem mexer em NENHUM botão!</p>
+                    </div>
+                    <div class="card">
+                        <h3>🧱 `.add_component()`</h3>
+                        <p>O <code>LinearPanel</code> começa vazio. Na função <code>render_actions()</code>, usamos <code>.add_component(novo_botao)</code> para desenhar botões na tela em tempo real baseados no banco de dados.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🏷️ A Propriedade `.tag`</h3>
+                        <p>No Anvil, todo componente tem uma propriedade invisível chamada <code>.tag</code> (A Etiqueta). Nós guardamos o Dicionário inteiro da consequência do botão lá dentro, para recuperá-lo na hora do clique.</p>
+                    </div>
+                    <div class="card">
+                        <h3>📨 O Argumento `sender`</h3>
+                        <p>A função <code>apply_consequence(self, sender, ...)</code> recebe o <code>sender</code> (o remetente). Graças a isso, lemos <code>sender.tag</code> e sabemos exatamente de qual botão veio a ação, sem precisar criar um evento para cada botão do jogo.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESUMO -->
+        <div class="summary-box">
+            <h2>🎯 RESUMO DO QUE VOCÊ APRENDEU</h2>
+            <p style="color: #ccc; font-size: 1.1rem; margin-top: 5px;">Mestre do Estado e Componentes Dinâmicos</p>
+            
+            <div class="summary-grid">
+                <div class="summary-item">✅ Separar as Funções de Lógica das Funções de Evento (Boas práticas).</div>
+                <div class="summary-item">✅ Estruturar o Estado do App em Dicionários (`game_state`).</div>
+                <div class="summary-item">✅ Criar bancos de dados em memória para separar Conteúdo de Lógica.</div>
+                <div class="summary-item">✅ Gerar Componentes (Botões) via código Python puro.</div>
+                <div class="summary-item">✅ Passar dados invisíveis dentro dos componentes utilizando o `.tag`.</div>
+                <div class="summary-item">✅ Identificar o emissor de um clique através do argumento `sender`.</div>
+            </div>
+            <p style="margin-top: 2.5rem; font-size: 1.2rem; font-weight: bold; color: var(--accent);">🚀 Nível Avançado Atingido! Seus aplicativos Anvil agora podem crescer infinitamente sem virar uma bagunça de Ifs/Elses!</p>
+        </div>
+    </div>
+
+    <script>
+        function toggleProps(header) {
+            const propsDiv = header.nextElementSibling;
+            propsDiv.classList.toggle('active');
+        }
+
+        function copyCode() {
+            const codeElement = document.getElementById('full-code');
+            const code = codeElement.innerText;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                alert('⚔️ Código do RPG copiado com sucesso! Hora da aventura!');
+            }).catch(err => {
+                console.error('Erro ao copiar: ', err);
+                alert('Erro ao copiar código. Pressione Ctrl+C manualmente.');
+            });
+        }
+    </script>
+</body>
+</html>

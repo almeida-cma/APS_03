@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANVIL WORKS - Concessão de Diploma</title>
+    <style>
+        :root {
+            /* Paleta Acadêmica (Universitária) */
+            --primary: #1e3a8a; /* Azul Marinho Profundo */
+            --secondary: #2563eb; /* Azul Royal */
+            --accent: #fbbf24; /* Dourado Acadêmico */
+            --danger: #ef4444; /* Vermelho Reprovação */
+            --success: #10b981; /* Verde Aprovação */
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --border: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: var(--primary);
+            background-image: radial-gradient(circle at top right, #2563eb 0%, transparent 40%);
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            border-bottom: 4px solid var(--accent);
+            color: var(--white);
+        }
+
+        .header h1 {
+            color: var(--white);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+        
+        .header h1 span { color: var(--accent); }
+        .header p { color: #cbd5e1; font-size: 1.2rem; font-weight: 500; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem 3rem 2rem; }
+
+        /* Seções */
+        .section {
+            background: var(--white); border-radius: 12px; margin-bottom: 2.5rem;
+            overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); transition: transform 0.3s ease;
+        }
+        .section:hover { transform: translateY(-3px); box-shadow: 0 15px 30px -5px rgba(30, 58, 138, 0.15); }
+
+        .section-title {
+            background: var(--white); color: var(--primary); padding: 1.2rem 2rem; font-size: 1.4rem; font-weight: bold;
+            display: flex; align-items: center; flex-wrap: wrap; gap: 10px; border-bottom: 2px solid var(--border);
+        }
+
+        .section-title span {
+            background: var(--primary); color: var(--accent); padding: 0.3rem 1rem;
+            border-radius: 20px; font-size: 0.85rem; margin-left: auto; font-weight: 600;
+        }
+
+        .section-content { padding: 2rem; }
+
+        /* Cards */
+        .requirements-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+        .card {
+            background: var(--light); border-left: 4px solid var(--secondary);
+            padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.3s ease;
+        }
+        .card:hover { border-left-color: var(--accent); background: var(--white); transform: translateX(5px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .card h3 { color: var(--primary); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 10px; font-size: 1.1rem; }
+        .card p { color: #475569; font-size: 0.95rem; }
+
+        /* Tabelas Acadêmicas */
+        .rule-table { width: 100%; border-collapse: collapse; border-radius: 8px; overflow: hidden; margin-bottom: 1rem; }
+        .rule-table th, .rule-table td { border: 1px solid var(--border); padding: 1rem; text-align: center; font-size: 0.95rem; }
+        .rule-table th { background: var(--primary); color: var(--white); font-weight: 600; }
+        .row-success { background-color: #ecfdf5; }
+        .row-danger { background-color: #fef2f2; }
+
+        /* Fluxo */
+        .flow {
+            background: #f0f4f8; padding: 2rem; border-radius: 8px; text-align: center;
+            font-family: 'Courier New', monospace; font-size: 1.1rem; font-weight: bold;
+            color: var(--primary); border: 2px dashed #94a3b8; line-height: 2;
+        }
+
+        /* Mockup do App */
+        .layout-visual {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius: 12px; padding: 3rem 2rem; position: relative; display: flex; justify-content: center;
+        }
+        .modern-app { background: var(--white); border-radius: 12px; padding: 2.5rem; width: 100%; max-width: 450px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        
+        .app-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem; color: var(--primary); text-align: center; border-bottom: 2px solid var(--border); padding-bottom: 10px;}
+        
+        .input-group { margin-bottom: 1.5rem; }
+        .input-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: #334155; font-size: 0.9rem; }
+        .input-group input { width: 100%; padding: 0.8rem; border: 2px solid var(--border); border-radius: 6px; font-size: 1rem; transition: border-color 0.3s; }
+        .input-group input:focus { outline: none; border-color: var(--secondary); }
+
+        .btn-check { width: 100%; background: var(--primary); color: var(--white); border: none; padding: 1rem; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1.1rem; transition: 0.3s; margin-bottom: 1.5rem; }
+        .btn-check:hover { background: var(--secondary); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
+
+        .result-box { padding: 1.5rem; text-align: center; border: 2px dashed var(--border); border-radius: 8px; background: var(--light); color: #64748b; font-weight: 500; }
+
+        /* Componentes Dropdown */
+        .component-list { display: flex; flex-direction: column; gap: 1rem; }
+        .component-item { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+        .component-header { background: var(--light); padding: 1rem 1.5rem; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--primary); }
+        .component-props { padding: 0; display: none; background: var(--white); }
+        .component-props.active { display: block; }
+        .props-table { width: 100%; border-collapse: collapse; }
+        .props-table td { padding: 0.8rem 1.5rem; border-bottom: 1px solid var(--border); }
+        .props-table td:first-child { font-weight: 600; width: 35%; color: var(--secondary); }
+        .props-table td:last-child { color: #475569; font-family: monospace; font-size: 1rem;}
+
+        /* Código */
+        .code-block { background: #1e1e1e; border-radius: 8px; overflow: hidden; }
+        .code-header { background: #2d2d2d; color: #e5e7eb; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; font-family: monospace; border-bottom: 1px solid #404040;}
+        .code-content { padding: 1.5rem; overflow-x: auto; }
+        .code-content pre { margin: 0; font-family: 'Consolas', monospace; font-size: 0.95rem; line-height: 1.6; color: #d4d4d4; }
+        .code-content pre .keyword { color: #c586c0; } /* Roxo */
+        .code-content pre .comment { color: #6a9955; font-style: italic; } 
+        .code-content pre .function { color: #dcdcaa; } 
+        .code-content pre .string { color: #ce9178; } 
+        .code-content pre .number { color: #b5cea8; } 
+        
+        .copy-btn { background: var(--secondary); color: white; border: none; padding: 0.4rem 1rem; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .copy-btn:hover { background: var(--primary); }
+
+        .summary-box { background: var(--primary); color: white; padding: 3rem; border-radius: 12px; text-align: center; box-shadow: 0 10px 25px rgba(30, 58, 138, 0.3); border-top: 5px solid var(--accent); }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .summary-item { background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--accent); font-weight: 500; text-align: left; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎓 Sistema de <span>Concessão de Diploma</span></h1>
+        <p>Mini Projeto - Análise e Projeto de Sistemas + Lógica Python</p>
+    </div>
+
+    <div class="container">
+        
+        <!-- ETAPA 1 -->
+        <div class="section">
+            <div class="section-title">
+                🧠 ETAPA 1 — ANÁLISE DO SISTEMA
+                <span>Requisitos e Stakeholders</span>
+            </div>
+            <div class="section-content">
+                <p style="margin-bottom: 1.5rem; color: #475569;"><strong>📌 Problema:</strong> Uma faculdade precisa de um sistema simples para verificar se um aluno tem direito ao diploma, baseado em sua <strong>nota final</strong> e <strong>frequência</strong> nas aulas.<br>
+                <strong>👥 Stakeholders (Interessados):</strong> Coordenador acadêmico, Secretaria da faculdade, Aluno.</p>
+                
+                <div class="requirements-grid">
+                    <div class="card">
+                        <h3>📥 RF01 e RF02 - Entradas</h3>
+                        <p>O sistema deve permitir entrada da NOTA (0 a 10) e da FREQUÊNCIA (0 a 100).</p>
+                    </div>
+                    <div class="card">
+                        <h3>🛡️ RF03 - Validação</h3>
+                        <p>O sistema deve validar se os valores estão dentro dos limites matemáticos permitidos.</p>
+                    </div>
+                    <div class="card">
+                        <h3>⚙️ RF04 - Processamento</h3>
+                        <p>O sistema deve informar se o aluno receberá ou não o DIPLOMA.</p>
+                    </div>
+                    <div class="card">
+                        <h3>📤 RF05 - Saída</h3>
+                        <p>O sistema deve exibir mensagem clara do resultado na tela para o usuário.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 2 -->
+        <div class="section">
+            <div class="section-title">
+                📊 ETAPA 2 — REGRAS E MATRIZ DE DECISÃO
+                <span>A Lógica Matemática (Coração do Sistema)</span>
+            </div>
+            <div class="section-content">
+                <h3 style="color: var(--primary); margin-bottom: 10px;">⚠️ Regras de Negócio</h3>
+                <table class="rule-table" style="margin-bottom: 2rem;">
+                    <thead>
+                        <tr><th>Condição</th><th>Resultado</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-success"><td>Nota ≥ 7 <strong>E</strong> Frequência ≥ 75</td><td>✅ DIPLOMA CONCEDIDO</td></tr>
+                        <tr class="row-danger"><td>Nota < 7 <strong>OU</strong> Frequência < 75</td><td>❌ NÃO ATENDE AOS REQUISITOS</td></tr>
+                    </tbody>
+                </table>
+
+                <h3 style="color: var(--primary); margin-bottom: 10px;">🧮 Matriz de Decisão (Operador Lógico AND)</h3>
+                <table class="rule-table">
+                    <thead>
+                        <tr><th>Nota</th><th>Frequência</th><th>Nota ≥ 7?</th><th>Freq ≥ 75?</th><th>Condição AND</th><th>Resultado Final</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-success"><td>8.5</td><td>80</td><td>✅ SIM</td><td>✅ SIM</td><td>✅ <strong>VERDADEIRO</strong></td><td>DIPLOMA</td></tr>
+                        <tr class="row-danger"><td>9.0</td><td>60</td><td>✅ SIM</td><td>❌ NÃO</td><td>❌ <strong>FALSO</strong></td><td>REPROVADO</td></tr>
+                        <tr class="row-danger"><td>6.0</td><td>90</td><td>❌ NÃO</td><td>✅ SIM</td><td>❌ <strong>FALSO</strong></td><td>REPROVADO</td></tr>
+                        <tr class="row-danger"><td>5.0</td><td>50</td><td>❌ NÃO</td><td>❌ NÃO</td><td>❌ <strong>FALSO</strong></td><td>REPROVADO</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ETAPA 3 -->
+        <div class="section">
+            <div class="section-title">
+                🔄 ETAPA 3 — FLUXO DO SISTEMA
+                <span>O Caminho da Informação</span>
+            </div>
+            <div class="section-content">
+                <div class="flow">
+                    Usuário digita NOTA e FREQUÊNCIA<br>
+                    ⬇<br>
+                    Sistema valida se os campos estão preenchidos e se são números<br>
+                    ⬇<br>
+                    Sistema valida limites lógicos (0-10 e 0-100)<br>
+                    ⬇<br>
+                    Sistema verifica Regra: (Nota ≥ 7) <strong>AND</strong> (Frequência ≥ 75) ?<br>
+                    ↙ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ↘<br>
+                    SIM &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NÃO<br>
+                    ⬇ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇<br>
+                    "Diploma" &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "Não atende"<br>
+                    ↘ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ↙<br>
+                    Resultado visual na tela
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 4 -->
+        <div class="section">
+            <div class="section-title">
+                🎨 ETAPA 4 — PROJETO DA INTERFACE
+                <span>Mockup Visual (Drag and Drop)</span>
+            </div>
+            <div class="section-content">
+                <div class="layout-visual">
+                    <div class="modern-app">
+                        
+                        <div class="app-title">🎓 SISTEMA DE DIPLOMA</div>
+
+                        <div class="input-group">
+                            <label>Nota Final (0 a 10)</label>
+                            <input type="number" placeholder="Digite a nota (0-10)" disabled>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Frequência (0 a 100)</label>
+                            <input type="number" placeholder="Digite a frequência (0-100)" disabled>
+                        </div>
+
+                        <button class="btn-check">✅ VERIFICAR</button>
+
+                        <div class="result-box">
+                            O resultado aparecerá aqui...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 5 -->
+        <div class="section">
+            <div class="section-title">
+                🧩 ETAPA 5 — COMPONENTES DO ANVIL
+                <span>Dicionário de Dados da UI</span>
+            </div>
+            <div class="section-content">
+                <div class="component-list">
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            1️⃣ Título Superior <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Tipo de Componente</td><td>Label</td></tr>
+                                <tr><td>Name (ID)</td><td>label_titulo</td></tr>
+                                <tr><td>Text</td><td>🎓 SISTEMA DE DIPLOMA</td></tr>
+                                <tr><td>Propriedades Extras</td><td>Align: center / Bold: True / Font Size: 24</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            2️⃣ e 3️⃣ Bloco de Nota <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Label Name</td><td>label_nota (Text: "Nota Final (0 a 10):" / Bold: True)</td></tr>
+                                <tr><td>TextBox Name</td><td>text_box_nota</td></tr>
+                                <tr><td>Placeholder</td><td>Digite a nota (0-10)</td></tr>
+                                <tr><td>Type</td><td>number</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            4️⃣ e 5️⃣ Bloco de Frequência <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Label Name</td><td>label_freq (Text: "Frequência (0 a 100):" / Bold: True)</td></tr>
+                                <tr><td>TextBox Name</td><td>text_box_freq</td></tr>
+                                <tr><td>Placeholder</td><td>Digite a frequência (0-100)</td></tr>
+                                <tr><td>Type</td><td>number</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            6️⃣ Botão de Ação <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Tipo de Componente</td><td>Button</td></tr>
+                                <tr><td>Name</td><td>button_verificar</td></tr>
+                                <tr><td>Text</td><td>✅ VERIFICAR</td></tr>
+                                <tr><td>Role</td><td>primary-color</td></tr>
+                                <tr><td>Eventos</td><td>Criar evento <b>click</b> ⚡</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            7️⃣ Caixa de Resultado <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Tipo de Componente</td><td>Label</td></tr>
+                                <tr><td>Name</td><td>label_resultado</td></tr>
+                                <tr><td>Text</td><td>(deixar vazio)</td></tr>
+                                <tr><td>Propriedades Extras</td><td>Align: center / Role: outlined-card</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 6 e 7 -->
+        <div class="section">
+            <div class="section-title">
+                💻 ETAPA 6 e 7 — CÓDIGO PYTHON COMPLETO
+                <span>Cole dentro do evento button_verificar_click</span>
+            </div>
+            <div class="section-content">
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>📄 form1.py</span>
+                        <button class="copy-btn" onclick="copyCode()">📋 Copiar Código</button>
+                    </div>
+                    <div class="code-content">
+                        <pre id="full-code">
+<span class="keyword">def</span> <span class="function">button_verificar_click</span>(self, **event_args):
+    
+    <span class="comment"># =========================
+    # ENTRADA DE DADOS
+    # O sistema PEGA o que o usuário digitou
+    # =========================</span>
+    
+    nota_texto = self.text_box_nota.text
+    frequencia_texto = self.text_box_freq.text
+    
+    
+    <span class="comment"># =========================
+    # VALIDAÇÃO 1 (Campos vazios)
+    # O sistema VERIFICA se faltou alguma informação
+    # =========================</span>
+    
+    <span class="keyword">if</span> nota_texto == <span class="string">""</span> <span class="keyword">or</span> frequencia_texto == <span class="string">""</span>:
+        self.label_resultado.text = <span class="string">"⚠️ Preencha todos os campos!"</span>
+        self.label_resultado.role = <span class="keyword">None</span>
+        <span class="keyword">return</span>
+    
+    
+    <span class="comment"># =========================
+    # CONVERSÃO PARA NÚMERO
+    # O sistema TRANSFORMA texto em número
+    # =========================</span>
+    
+    <span class="keyword">try</span>:
+        nota = float(nota_texto)
+        frequencia = float(frequencia_texto)
+    <span class="keyword">except</span>:
+        self.label_resultado.text = <span class="string">"❌ Digite apenas números!"</span>
+        self.label_resultado.role = <span class="keyword">None</span>
+        <span class="keyword">return</span>
+    
+    
+    <span class="comment"># =========================
+    # VALIDAÇÃO 2 (Limites Permitidos)
+    # VERIFICA limites (0-10, 0-100)
+    # =========================</span>
+    
+    <span class="keyword">if</span> nota &lt; <span class="number">0</span> <span class="keyword">or</span> nota &gt; <span class="number">10</span>:
+        self.label_resultado.text = <span class="string">"❌ Nota inválida! Digite um valor entre 0 e 10."</span>
+        self.label_resultado.role = <span class="keyword">None</span>
+        <span class="keyword">return</span>
+    
+    <span class="keyword">if</span> frequencia &lt; <span class="number">0</span> <span class="keyword">or</span> frequencia &gt; <span class="number">100</span>:
+        self.label_resultado.text = <span class="string">"❌ Frequência inválida! Digite um valor entre 0 e 100."</span>
+        self.label_resultado.role = <span class="keyword">None</span>
+        <span class="keyword">return</span>
+    
+    
+    <span class="comment"># =========================
+    # REGRA DE NEGÓCIO (O Coração do Sistema)
+    # AND = ambas condições devem ser verdadeiras
+    # =========================</span>
+    
+    <span class="keyword">if</span> nota &gt;= <span class="number">7</span> <span class="keyword">and</span> frequencia &gt;= <span class="number">75</span>:
+        situacao = <span class="string">"✅ DIPLOMA CONCEDIDO!"</span>
+        cor = <span class="string">"success"</span>
+        
+    <span class="keyword">else</span>:
+        cor = <span class="string">"danger"</span>
+        
+        <span class="comment"># Mensagem adicional explicando o motivo exato da reprovação</span>
+        <span class="keyword">if</span> nota &lt; <span class="number">7</span> <span class="keyword">and</span> frequencia &lt; <span class="number">75</span>:
+            motivo = <span class="string">"Nota abaixo de 7 E frequência abaixo de 75%"</span>
+        <span class="keyword">elif</span> nota &lt; <span class="number">7</span>:
+            motivo = <span class="string">"Nota abaixo de 7"</span>
+        <span class="keyword">else</span>:
+            motivo = <span class="string">"Frequência abaixo de 75%"</span>
+        
+        situacao = <span class="string">f"❌ NÃO ATENDE AOS REQUISITOS\n({motivo})"</span>
+    
+    
+    <span class="comment"># =========================
+    # SAÍDA
+    # O sistema MOSTRA o resultado para o usuário
+    # =========================</span>
+    
+    self.label_resultado.text = situacao
+    self.label_resultado.role = cor
+</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 8 -->
+        <div class="section">
+            <div class="section-title">
+                📖 ETAPA 8 — EXPLICANDO O CÓDIGO E TESTES
+                <span>Compreensão e Validação</span>
+            </div>
+            <div class="section-content">
+                <div class="requirements-grid" style="margin-bottom: 2rem;">
+                    <div class="card">
+                        <h3>📥 Entrada e Conversão</h3>
+                        <p>Textos da tela entram como String. Usamos <code>float()</code> para que o Python entenda que são números que podem ter casas decimais.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🧮 Lógica Condicional (O IF/ELSE)</h3>
+                        <p>O <code>if ... else</code> permite que o sistema tome uma DECISÃO baseada nas regras impostas pela faculdade, automatizando o papel da secretaria.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🎨 A Propriedade `.role`</h3>
+                        <p>O Anvil permite usar temas (Roles). Ao definirmos <code>.role = "success"</code> via código, o Anvil pinta o label de verde automaticamente. <code>"danger"</code> o pinta de vermelho.</p>
+                    </div>
+                </div>
+
+                <h3 style="color: var(--primary); margin-bottom: 10px; border-top: 1px solid var(--border); padding-top: 1.5rem;">🧪 Casos de Teste (Faça isso com os alunos!)</h3>
+                <table class="rule-table">
+                    <thead>
+                        <tr><th>Teste (Entrada)</th><th>Valores (Nota, Freq)</th><th>Saída Esperada no App</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Caminho Feliz</td><td>10, 100</td><td>✅ DIPLOMA CONCEDIDO</td></tr>
+                        <tr><td>Limites exatos</td><td>7, 75</td><td>✅ DIPLOMA CONCEDIDO</td></tr>
+                        <tr><td>Quase lá (Nota)</td><td>6.9, 75</td><td>❌ REPROVADO (Nota abaixo de 7)</td></tr>
+                        <tr><td>Quase lá (Freq)</td><td>7, 74</td><td>❌ REPROVADO (Frequência abaixo de 75)</td></tr>
+                        <tr><td>Reprovação Total</td><td>0, 0</td><td>❌ REPROVADO</td></tr>
+                        <tr><td>Vazio</td><td>[Nada], [Nada]</td><td>⚠️ Preencha todos os campos!</td></tr>
+                        <tr><td>Texto Incorreto</td><td>"Dez", 80</td><td>❌ Digite apenas números!</td></tr>
+                        <tr><td>Fora do Limite</td><td>11, 80</td><td>❌ Nota inválida!</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- RESUMO E MELHORIAS FUTURAS -->
+        <div class="summary-box">
+            <h2>🎯 RESUMO DO PROJETO EM UMA PÁGINA</h2>
+            <p style="color: #cbd5e1; font-size: 1.1rem; margin-top: 5px;">Sistema de Concessão de Diploma - Ciclo Completo</p>
+            
+            <div class="summary-grid">
+                <div class="summary-item">✅ <strong>Entrada Dupla:</strong> Recebe nota e frequência da UI.</div>
+                <div class="summary-item">✅ <strong>Validação Robusta:</strong> Evita erros de campos vazios e letras.</div>
+                <div class="summary-item">✅ <strong>Limites:</strong> Garante que as notas façam sentido lógico no mundo real.</div>
+                <div class="summary-item">✅ <strong>Regra Clara:</strong> Processamento matemático usando operador `AND`.</div>
+                <div class="summary-item">✅ <strong>Feedback Visual:</strong> Saída com cores diferentes para cada cenário.</div>
+            </div>
+
+            <div style="background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 8px; margin-top: 2rem; text-align: left;">
+                <h3 style="color: var(--accent); margin-bottom: 10px;">🚀 Melhorias Futuras (Para as próximas aulas)</h3>
+                <ul style="list-style: none;">
+                    <li style="margin-bottom: 5px;">🟢 <strong>Nível 2:</strong> Adicionar campo NOME do aluno e exibir mensagem personalizada (Ex: "João, você foi aprovado!").</li>
+                    <li style="margin-bottom: 5px;">🟡 <strong>Nível 3:</strong> Adicionar entrada para 3 bimestres e fazer o sistema calcular a MÉDIA automaticamente.</li>
+                    <li>🔵 <strong>Nível 4:</strong> Salvar o histórico dos alunos no Banco de Dados (Data Tables) nativo do Anvil.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleProps(header) {
+            const propsDiv = header.nextElementSibling;
+            propsDiv.classList.toggle('active');
+        }
+
+        function copyCode() {
+            const codeElement = document.getElementById('full-code');
+            const code = codeElement.innerText;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                alert('🎓 Código acadêmico copiado! Sucesso na aula!');
+            }).catch(err => {
+                console.error('Erro ao copiar: ', err);
+                alert('Erro ao copiar código. Pressione Ctrl+C manualmente.');
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANVIL WORKS - Jogo Pedra, Papel e Tesoura</title>
+    <style>
+        :root {
+            --primary: #4e54c8;
+            --secondary: #8f94fb;
+            --danger: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --dark: #2d3748;
+            --light: #f8f9fa;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p { color: #666; font-size: 1.2rem; font-weight: 500; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem 3rem 2rem; }
+
+        /* Seções */
+        .section {
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 2.5rem;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
+        }
+        .section:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
+
+        .section-title {
+            background: linear-gradient(135deg, var(--dark) 0%, #4a5568 100%);
+            color: white;
+            padding: 1.2rem 2rem;
+            font-size: 1.4rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .section-title span {
+            background: #ffd700;
+            color: #333;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-left: auto;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .section-content { padding: 2rem; }
+
+        /* Cards */
+        .requirements-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+        .card {
+            background: var(--light);
+            border-left: 5px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateX(5px);
+            border-left-color: var(--secondary);
+            background: #fff;
+            box-shadow: 0 8px 15px rgba(102,126,234,0.15);
+        }
+        .card h3 { color: var(--primary); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 10px; }
+
+        /* Tabelas */
+        .rule-table { width: 100%; border-collapse: collapse; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .rule-table th, .rule-table td { border: 1px solid #e2e8f0; padding: 1rem; text-align: center; font-size: 1.1rem; }
+        .rule-table th { background: var(--dark); color: white; font-weight: 600; }
+
+        /* Fluxo */
+        .flow {
+            background: #f8fafc; padding: 2rem; border-radius: 10px; text-align: center;
+            font-family: 'Courier New', monospace; font-size: 1.1rem; font-weight: bold;
+            color: var(--dark); border: 2px dashed var(--primary); line-height: 2;
+        }
+
+        /* Mockup do App */
+        .layout-visual {
+            background: linear-gradient(135deg, #1e1e2e 0%, #2a2a3e 100%);
+            border-radius: 15px; padding: 3rem 2rem; position: relative; display: flex; justify-content: center;
+        }
+        .layout-visual::before {
+            content: "✨ PREVIEW DA INTERFACE ANVIL ✨"; position: absolute; top: 15px; right: 20px;
+            background: #ffd700; color: #333; padding: 0.4rem 1.2rem; border-radius: 20px; font-size: 0.85rem; font-weight: bold;
+        }
+        .modern-app { background: white; border-radius: 15px; padding: 2.5rem; width: 100%; max-width: 450px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); text-align: center; }
+        .app-header h2 { color: var(--primary); font-size: 1.6rem; margin-bottom: 1rem; }
+        .scoreboard { background: var(--dark); color: white; padding: 10px; border-radius: 8px; font-size: 1.2rem; font-weight: bold; margin-bottom: 2rem; }
+        
+        .action-buttons { display: flex; gap: 10px; justify-content: center; margin-bottom: 2rem; }
+        .game-btn { flex: 1; padding: 15px 10px; font-size: 1.5rem; border: none; border-radius: 10px; background: #edf2f7; cursor: pointer; border: 2px solid #cbd5e0; }
+        
+        .result-area { background: #edf2f7; border-radius: 8px; padding: 1.5rem; text-align: center; border: 2px dashed #cbd5e0; }
+
+        /* Componentes */
+        .component-list { display: flex; flex-direction: column; gap: 1rem; }
+        .component-item { border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
+        .component-header { background: var(--light); padding: 1rem 1.5rem; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--dark); transition: background 0.2s; }
+        .component-header:hover { background: #e2e8f0; }
+        .component-props { padding: 0; display: none; }
+        .component-props.active { display: block; }
+        .props-table { width: 100%; border-collapse: collapse; }
+        .props-table td { padding: 0.8rem 1.5rem; border-bottom: 1px solid #e2e8f0; }
+        .props-table tr:last-child td { border-bottom: none; }
+        .props-table td:first-child { font-weight: 600; width: 35%; color: var(--primary); background: #fff; }
+        .props-table td:last-child { background: #f8fafc; font-family: monospace; font-size: 1.05rem;}
+
+        /* Código */
+        .code-block { background: #1e1e1e; border-radius: 10px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .code-header { background: #2d2d2d; color: #d4d4d4; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #404040; font-family: monospace; }
+        .code-content { padding: 1.5rem; overflow-x: auto; }
+        .code-content pre { margin: 0; font-family: 'Consolas', 'Courier New', monospace; font-size: 0.95rem; line-height: 1.6; color: #ce9178; }
+        .code-content pre .keyword { color: #569cd6; } 
+        .code-content pre .comment { color: #6a9955; } 
+        .code-content pre .function { color: #dcdcaa; } 
+        .code-content pre .variable { color: #9cdcfe; }
+        
+        .copy-btn { background: var(--primary); color: white; border: none; padding: 0.5rem 1.2rem; border-radius: 5px; cursor: pointer; font-weight: bold; transition: all 0.2s; }
+        .copy-btn:hover { background: var(--secondary); transform: scale(1.05); }
+
+        .toast { position: fixed; bottom: 30px; right: 30px; background: var(--success); color: white; padding: 1rem 2rem; border-radius: 8px; display: none; z-index: 1000; font-weight: bold; box-shadow: 0 10px 20px rgba(0,0,0,0.2); animation: slideIn 0.3s ease forwards; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        .summary-box { background: linear-gradient(135deg, var(--dark) 0%, #1a202c 100%); color: white; padding: 3rem; border-radius: 15px; text-align: center; box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .summary-item { background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--success); font-weight: 500; text-align: left; display: flex; align-items: center; gap: 10px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎮 ANVIL WORKS</h1>
+        <p>Guia Didático Completo - Jogo Pedra, Papel e Tesoura</p>
+    </div>
+
+    <div class="container">
+        
+        <!-- ETAPA 1 -->
+        <div class="section">
+            <div class="section-title">
+                ✅ ETAPA 1 — REQUISITOS FUNCIONAIS
+                <span>O que o sistema deve fazer</span>
+            </div>
+            <div class="section-content">
+                <div class="requirements-grid">
+                    <div class="card">
+                        <h3>🖱️ RF01 - Interação</h3>
+                        <p>O jogador deve poder escolher entre Pedra, Papel ou Tesoura clicando em botões interativos na tela.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🤖 RF02 - Inteligência Artificial</h3>
+                        <p>O sistema (CPU) deve fazer uma escolha aleatória entre as três opções no mesmo momento em que o jogador clica.</p>
+                    </div>
+                    <div class="card">
+                        <h3>⚖️ RF03 - Julgamento</h3>
+                        <p>O aplicativo deve comparar as escolhas e determinar se houve Vitória, Derrota ou Empate.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🏆 RF04 - Placar Dinâmico</h3>
+                        <p>O sistema deve manter a memória dos pontos, somando +1 para o jogador ou para a CPU após cada rodada.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 2 -->
+        <div class="section">
+            <div class="section-title">
+                📋 ETAPA 2 — REGRAS DE NEGÓCIO
+                <span>Lógica de Combate e Vantagens</span>
+            </div>
+            <div class="section-content">
+                <table class="rule-table">
+                    <thead>
+                        <tr><th>Jogador Escolhe</th><th>CPU Escolhe</th><th>Resultado</th><th>Cor Visual</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background: #e6f4ea;"><td>🪨 Pedra</td><td>✂️ Tesoura</td><td>VITÓRIA</td><td>Verde</td></tr>
+                        <tr style="background: #e6f4ea;"><td>📄 Papel</td><td>🪨 Pedra</td><td>VITÓRIA</td><td>Verde</td></tr>
+                        <tr style="background: #e6f4ea;"><td>✂️ Tesoura</td><td>📄 Papel</td><td>VITÓRIA</td><td>Verde</td></tr>
+                        <tr style="background: #fef5e5;"><td colspan="2">Escolhas Iguais</td><td>EMPATE</td><td>Laranja</td></tr>
+                        <tr style="background: #fce8e6;"><td colspan="2">Qualquer outra combinação</td><td>DERROTA</td><td>Vermelho</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ETAPA 3 -->
+        <div class="section">
+            <div class="section-title">
+                🔄 ETAPA 3 — FLUXO DO SISTEMA
+                <span>O caminho dos dados e execução</span>
+            </div>
+            <div class="section-content">
+                <div class="flow">
+                    Tela Inicializa (Placar Jogador = 0 | CPU = 0)<br>
+                    ⬇<br>
+                    Usuário clica em um dos 3 botões (ex: Pedra)<br>
+                    ⬇<br>
+                    Botão aciona a função principal enviando a escolha<br>
+                    ⬇<br>
+                    Python usa <code>random.choice</code> para a CPU<br>
+                    ⬇<br>
+                    Compara as escolhas na Regra de Negócio<br>
+                    ⬇<br>
+                    Atualiza a Variável de Estado (+1 Ponto)<br>
+                    ⬇<br>
+                    Atualiza os Labels na tela (Placar e Mensagem de Vitória/Derrota)
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 4 -->
+        <div class="section">
+            <div class="section-title">
+                🎨 ETAPA 4 — PROJETO DA INTERFACE
+                <span>Design e Layout no Drag and Drop do Anvil</span>
+            </div>
+            <div class="section-content">
+                <div class="layout-visual">
+                    <div class="modern-app">
+                        <div class="app-header">
+                            <h2>🎮 JOKENPÔ APP</h2>
+                            <div class="scoreboard">
+                                👤 Jogador: 0 &nbsp;&nbsp;|&nbsp;&nbsp; 🤖 CPU: 0
+                            </div>
+                        </div>
+
+                        <p style="color: #666; margin-bottom: 15px; font-weight: bold;">FAÇA SUA ESCOLHA:</p>
+                        
+                        <div class="action-buttons">
+                            <button class="game-btn">🪨</button>
+                            <button class="game-btn">📄</button>
+                            <button class="game-btn">✂️</button>
+                        </div>
+
+                        <div class="result-area">
+                            <div style="font-size: 0.9rem; color: #4a5568; margin-bottom: 5px;">🤖 CPU escolheu: (aguardando)</div>
+                            <div style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-top: 10px;">Quem vai vencer?</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 5 -->
+        <div class="section">
+            <div class="section-title">
+                🧩 ETAPA 5 — COMPONENTES DO ANVIL
+                <span>Propriedades exatas usadas no construtor visual</span>
+            </div>
+            <div class="section-content">
+                <p style="margin-bottom: 1rem; color: #666;"><em>Configure esses itens no painel Properties (à direita) no Anvil Studio.</em></p>
+                
+                <div class="component-list">
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            1️⃣ Título Superior (Label) <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Componente</td><td>Label</td></tr>
+                                <tr><td>Name</td><td>label_titulo</td></tr>
+                                <tr><td>Text</td><td>🎮 JOKENPÔ APP</td></tr>
+                                <tr><td>Align</td><td>center</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            2️⃣ Placar do Jogo (Label) <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Componente</td><td>Label</td></tr>
+                                <tr><td>Name</td><td>label_placar</td></tr>
+                                <tr><td>Text</td><td>👤 Jogador: 0 | 🤖 CPU: 0</td></tr>
+                                <tr><td>Align/Bold</td><td>center / True</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            3️⃣ Botões de Jogada (Buttons) <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Componente</td><td>Button (Arraste 3 unidades)</td></tr>
+                                <tr><td>Names</td><td>button_pedra / button_papel / button_tesoura</td></tr>
+                                <tr><td>Texts</td><td>🪨 Pedra / 📄 Papel / ✂️ Tesoura</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            4️⃣ Textos de Retorno (Labels) <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Componente</td><td>Label (Arraste 2 unidades)</td></tr>
+                                <tr><td>Names</td><td>label_escolha_cpu / label_resultado</td></tr>
+                                <tr><td>Text 1</td><td>🤖 CPU escolheu: </td></tr>
+                                <tr><td>Text 2</td><td>(Vazio) - Deixe Fonte Grande/Bold</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 6 -->
+        <div class="section">
+            <div class="section-title">
+                ⚡ ETAPA 6 — CRIANDO OS EVENTOS
+                <span>Como conectar 3 botões a uma única lógica</span>
+            </div>
+            <div class="section-content">
+                <div class="card" style="border-left-color: #f39c12; background: #fffdf5;">
+                    <ol style="margin-left: 1.5rem; line-height: 2;">
+                        <li>No modo Design, clique no botão <strong>🪨 Pedra</strong>.</li>
+                        <li>Vá no painel da direita, desça até <strong>Events ⚡</strong> e crie o evento <code>click</code>.</li>
+                        <li>Volte ao Design e repita o processo para os botões <strong>📄 Papel</strong> e <strong>✂️ Tesoura</strong>.</li>
+                        <li>Isso criará 3 funções de clique distintas no seu código.</li>
+                        <li>Na Etapa 7, você verá que esses cliques apenas chamam uma Função Principal chamada <code>jogar()</code>, repassando o nome da arma escolhida.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 7 -->
+        <div class="section">
+            <div class="section-title">
+                💻 ETAPA 7 — CÓDIGO PYTHON COMPLETO
+                <span>Código do Backend - Copie e Cole</span>
+            </div>
+            <div class="section-content">
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>📄 form1.py - Lógica do Jogo</span>
+                        <button class="copy-btn" onclick="copyCode()">📋 Copiar Código</button>
+                    </div>
+                    <div class="code-content">
+                        <pre id="full-code" style="color: #d4d4d4;">
+<span class="keyword">import</span> random  <span class="comment"># Necessário para a IA escolher aleatoriamente</span>
+
+<span class="keyword">class</span> Form1(Form1Template):
+  
+  <span class="keyword">def</span> <span class="function">__init__</span>(self, **properties):
+    <span class="comment"># Inicializa o form e os componentes do Anvil</span>
+    self.init_components(**properties)
+
+    <span class="comment"># =========================
+    # VARIÁVEIS DE ESTADO (MEMÓRIA)
+    # Guarda a pontuação enquanto a tela estiver aberta
+    # =========================</span>
+    self.pontos_jogador = 0
+    self.pontos_cpu = 0
+
+
+  <span class="comment"># =========================
+  # EVENTOS DE CLIQUE DOS BOTÕES
+  # Capturam o botão clicado e repassam para a lógica
+  # =========================</span>
+  <span class="keyword">def</span> <span class="function">button_pedra_click</span>(self, **event_args):
+    self.jogar(<span style="color: #ce9178;">"Pedra"</span>)
+
+  <span class="keyword">def</span> <span class="function">button_papel_click</span>(self, **event_args):
+    self.jogar(<span style="color: #ce9178;">"Papel"</span>)
+
+  <span class="keyword">def</span> <span class="function">button_tesoura_click</span>(self, **event_args):
+    self.jogar(<span style="color: #ce9178;">"Tesoura"</span>)
+
+
+  <span class="comment"># =========================
+  # MOTOR DO JOGO (LÓGICA PRINCIPAL)
+  # =========================</span>
+  <span class="keyword">def</span> <span class="function">jogar</span>(self, escolha_jogador):
+    
+    <span class="comment"># 1. CPU escolhe aleatoriamente</span>
+    opcoes = [<span style="color: #ce9178;">"Pedra"</span>, <span style="color: #ce9178;">"Papel"</span>, <span style="color: #ce9178;">"Tesoura"</span>]
+    escolha_cpu = random.choice(opcoes)
+    
+    <span class="comment"># Mostra na tela o que a CPU escolheu</span>
+    self.label_escolha_cpu.text = <span style="color: #ce9178;">f"🤖 CPU escolheu: {escolha_cpu}"</span>
+
+    <span class="comment"># 2. Verifica a Regra de Negócio (Quem Ganhou?)</span>
+    <span class="keyword">if</span> escolha_jogador == escolha_cpu:
+      resultado = <span style="color: #ce9178;">"EMPATE! 😐"</span>
+      cor = <span style="color: #ce9178;">"#f39c12"</span>  <span class="comment"># Laranja</span>
+
+    <span class="keyword">elif</span> (escolha_jogador == <span style="color: #ce9178;">"Pedra"</span> <span class="keyword">and</span> escolha_cpu == <span style="color: #ce9178;">"Tesoura"</span>) <span class="keyword">or</span> \
+         (escolha_jogador == <span style="color: #ce9178;">"Papel"</span> <span class="keyword">and</span> escolha_cpu == <span style="color: #ce9178;">"Pedra"</span>) <span class="keyword">or</span> \
+         (escolha_jogador == <span style="color: #ce9178;">"Tesoura"</span> <span class="keyword">and</span> escolha_cpu == <span style="color: #ce9178;">"Papel"</span>):
+      resultado = <span style="color: #ce9178;">"VOCÊ VENCEU! 🎉"</span>
+      cor = <span style="color: #ce9178;">"#27ae60"</span>  <span class="comment"># Verde</span>
+      self.pontos_jogador += 1  <span class="comment"># Adiciona ponto ao jogador</span>
+
+    <span class="keyword">else</span>:
+      resultado = <span style="color: #ce9178;">"VOCÊ PERDEU! 😢"</span>
+      cor = <span style="color: #ce9178;">"#e74c3c"</span>  <span class="comment"># Vermelho</span>
+      self.pontos_cpu += 1      <span class="comment"># Adiciona ponto à CPU</span>
+
+    <span class="comment"># 3. Atualiza a Tela (Saída de Dados)</span>
+    self.label_resultado.text = resultado
+    self.label_resultado.foreground = cor
+    
+    <span class="comment"># Atualiza o texto do placar com os novos pontos</span>
+    self.label_placar.text = <span style="color: #ce9178;">f"👤 Jogador: {self.pontos_jogador} | 🤖 CPU: {self.pontos_cpu}"</span></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 8 -->
+        <div class="section">
+            <div class="section-title">
+                📖 ETAPA 8 — EXPLICAÇÃO DETALHADA DO CÓDIGO
+                <span>Entenda a mágica por trás do jogo</span>
+            </div>
+            <div class="section-content">
+                <div class="requirements-grid">
+                    <div class="card">
+                        <h3>📦 IMPORTANDO MÓDULOS</h3>
+                        <p>No Python, <code>import random</code> traz uma "caixa de ferramentas" pronta para lidar com aleatoriedade. Sem ela, a CPU não saberia como escolher itens de forma imprevisível.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🧠 VARIÁVEIS DE ESTADO</h3>
+                        <p>Criamos <code>self.pontos_jogador = 0</code> dentro do bloco <code>__init__</code>. O Anvil roda o Init ao abrir a página. Ao usar o <code>self.</code>, garantimos que a variável não seja apagada entre as rodadas do jogo.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🔀 FUNÇÕES AUXILIARES</h3>
+                        <p>Em vez de escrever a regra do jogo três vezes (uma para cada botão), criamos uma função extra <code>jogar(escolha)</code>. Os botões apenas enviam a "arma" selecionada para esta função principal trabalhar.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🎲 A JOGADA DA CPU</h3>
+                        <p>O comando <code>random.choice(opcoes)</code> pega a lista que criamos (Pedra, Papel, Tesoura) e seleciona um item aleatório, exatamente como o cérebro da CPU.</p>
+                    </div>
+                    <div class="card">
+                        <h3>⚔️ MATRIZ DE VITÓRIA</h3>
+                        <p>A estrutura de <code>if / elif / else</code> verifica: 1º Se for igual = Empate. 2º Colocamos TODAS as 3 regras de vitória dentro de parênteses separadas por <code>or</code> (Ou). 3º Qualquer outra coisa que sobrar no Else, significa Derrota.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🔢 INCREMENTO MATEMÁTICO</h3>
+                        <p>O operador <code>+= 1</code> (Ex: self.pontos_cpu += 1) é o mesmo que dizer "pegue o valor atual e some + 1 a ele". Essencial para criar placares que crescem progressivamente.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESUMO -->
+        <div class="summary-box">
+            <h2>🎯 RESUMO DO QUE VOCÊ APRENDEU</h2>
+            <p style="color: #cbd5e0; font-size: 1.1rem; margin-top: 5px;">Os principais insights desta construção</p>
+            
+            <div class="summary-grid">
+                <div class="summary-item">✅ Importar e usar bibliotecas externas (random).</div>
+                <div class="summary-item">✅ Criar variáveis globais de tela usando o __init__.</div>
+                <div class="summary-item">✅ Centralizar a lógica criando métodos personalizados (def jogar).</div>
+                <div class="summary-item">✅ Capturar cliques de botões e passar parâmetros string.</div>
+                <div class="summary-item">✅ Sortear itens em uma lista Python (random.choice).</div>
+                <div class="summary-item">✅ Usar operadores lógicos (and / or / \) em regras complexas.</div>
+                <div class="summary-item">✅ Incrementar números (+= 1) para gerar contadores e placares.</div>
+            </div>
+            <p style="margin-top: 2.5rem; font-size: 1.2rem; font-weight: bold; color: #ffd700;">🚀 Level Up! Você acabou de adicionar Lógica Ramificada, Estado e Módulos ao seu arsenal no Anvil!</p>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">✅ Código copiado com sucesso!</div>
+
+    <script>
+        function toggleProps(header) {
+            const propsDiv = header.nextElementSibling;
+            propsDiv.classList.toggle('active');
+            const arrow = header.querySelector('span');
+            if (propsDiv.classList.contains('active')) {
+                arrow.innerHTML = '▲';
+                header.style.background = '#e2e8f0';
+            } else {
+                arrow.innerHTML = '▼';
+                header.style.background = '#f8f9fa';
+            }
+        }
+
+        function copyCode() {
+            const codeElement = document.getElementById('full-code');
+            const code = codeElement.innerText;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                const toast = document.getElementById('toast');
+                toast.style.display = 'block';
+                setTimeout(() => { toast.style.display = 'none'; }, 3000);
+            }).catch(err => {
+                console.error('Erro ao copiar: ', err);
+                alert('Erro ao copiar código. Pressione Ctrl+C manualmente.');
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANVIL WORKS - Guia Didático Completo</title>
+    <style>
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --danger: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --dark: #2d3748;
+            --light: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem 3rem 2rem;
+        }
+
+        /* Seções */
+        .section {
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 2.5rem;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .section-title {
+            background: linear-gradient(135deg, var(--dark) 0%, #4a5568 100%);
+            color: white;
+            padding: 1.2rem 2rem;
+            font-size: 1.4rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .section-title span {
+            background: #ffd700;
+            color: #333;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-left: auto;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .section-content {
+            padding: 2rem;
+        }
+
+        /* Cards e listas */
+        .requirements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--light);
+            border-left: 5px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateX(5px);
+            border-left-color: var(--secondary);
+            background: #fff;
+            box-shadow: 0 8px 15px rgba(102,126,234,0.15);
+        }
+
+        .card h3 {
+            color: var(--primary);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Tabelas */
+        .rule-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .rule-table th, .rule-table td {
+            border: 1px solid #e2e8f0;
+            padding: 1rem;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .rule-table th {
+            background: var(--dark);
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Fluxo */
+        .flow {
+            background: #f8fafc;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--dark);
+            border: 2px dashed var(--primary);
+            line-height: 2;
+        }
+
+        /* Layout Visual (Mockup) */
+        .layout-visual {
+            background: linear-gradient(135deg, #1e1e2e 0%, #2a2a3e 100%);
+            border-radius: 15px;
+            padding: 3rem 2rem;
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        .layout-visual::before {
+            content: "✨ PREVIEW DA INTERFACE ANVIL ✨";
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: #ffd700;
+            color: #333;
+            padding: 0.4rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .modern-app {
+            background: white;
+            border-radius: 15px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .app-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .app-header h2 {
+            color: var(--primary);
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .input-group { margin-bottom: 1.5rem; }
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 1rem 0;
+            text-transform: uppercase;
+        }
+
+        .result-area {
+            background: #edf2f7;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 2px dashed #cbd5e0;
+        }
+
+        /* Componentes Dropdown */
+        .component-list { display: flex; flex-direction: column; gap: 1rem; }
+        .component-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .component-header {
+            background: var(--light);
+            padding: 1rem 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--dark);
+            transition: background 0.2s;
+        }
+        .component-header:hover { background: #e2e8f0; }
+        .component-props {
+            padding: 0;
+            display: none;
+        }
+        .component-props.active { display: block; }
+        
+        .props-table { width: 100%; border-collapse: collapse; }
+        .props-table td { padding: 0.8rem 1.5rem; border-bottom: 1px solid #e2e8f0; }
+        .props-table tr:last-child td { border-bottom: none; }
+        .props-table td:first-child {
+            font-weight: 600;
+            width: 35%;
+            color: var(--primary);
+            background: #fff;
+        }
+        .props-table td:last-child { background: #f8fafc; font-family: monospace; font-size: 1.05rem;}
+
+        /* Código */
+        .code-block {
+            background: #1e1e1e;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .code-header {
+            background: #2d2d2d;
+            color: #d4d4d4;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #404040;
+            font-family: monospace;
+        }
+        .code-content {
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+        .code-content pre {
+            margin: 0;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #ce9178; /* Estilo de string do VSCode */
+        }
+        .code-content pre .keyword { color: #569cd6; } /* Azul keywords */
+        .code-content pre .comment { color: #6a9955; } /* Verde comentários */
+        .code-content pre .function { color: #dcdcaa; } /* Amarelo funções */
+        
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover { background: var(--secondary); transform: scale(1.05); }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--success);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            display: none;
+            z-index: 1000;
+            font-weight: bold;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .summary-box {
+            background: linear-gradient(135deg, var(--dark) 0%, #1a202c 100%);
+            color: white;
+            padding: 3rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .summary-item {
+            background: rgba(255,255,255,0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--success);
+            font-weight: 500;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📚 ANVIL WORKS</h1>
+        <p>Guia Didático Completo - Aprenda criando um App Passo a Passo</p>
+    </div>
+
+    <div class="container">
+        
+        <!-- ETAPA 1 -->
+        <div class="section">
+            <div class="section-title">
+                ✅ ETAPA 1 — REQUISITOS FUNCIONAIS
+                <span>O que o sistema deve fazer</span>
+            </div>
+            <div class="section-content">
+                <div class="requirements-grid">
+                    <div class="card">
+                        <h3>📝 RF01 - Entrada</h3>
+                        <p>O usuário deve informar 3 notas em formato numérico (de 0 a 10) nos campos dedicados.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🧮 RF02 - Cálculo</h3>
+                        <p>O sistema deve calcular a média aritmética simples somando as notas e dividindo por 3.</p>
+                    </div>
+                    <div class="card">
+                        <h3>📊 RF03 - Retorno</h3>
+                        <p>O sistema deve informar a situação final do aluno (Aprovado, Recuperação ou Reprovado).</p>
+                    </div>
+                    <div class="card">
+                        <h3>⚠️ RF04 - Segurança</h3>
+                        <p>O sistema deve validar valores inválidos, como campos vazios, letras ou números fora do intervalo 0-10.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 2 -->
+        <div class="section">
+            <div class="section-title">
+                📋 ETAPA 2 — REGRAS DE NEGÓCIO
+                <span>Como calcular a situação (Lógica Core)</span>
+            </div>
+            <div class="section-content">
+                <table class="rule-table">
+                    <thead>
+                        <tr><th>Condição (Média)</th><th>Situação Resultante</th><th>Cor Visual</th><th>Emoji</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background: #e6f4ea;"><td>Maior ou igual a 7.0 (≥ 7)</td><td>APROVADO</td><td>Verde</td><td>✅</td></tr>
+                        <tr style="background: #fef5e5;"><td>Entre 5.0 e 6.9 (≥ 5 e &lt; 7)</td><td>RECUPERAÇÃO</td><td>Laranja</td><td>⚠️</td></tr>
+                        <tr style="background: #fce8e6;"><td>Menor que 5.0 (&lt; 5)</td><td>REPROVADO</td><td>Vermelho</td><td>❌</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ETAPA 3 -->
+        <div class="section">
+            <div class="section-title">
+                🔄 ETAPA 3 — FLUXO DO SISTEMA
+                <span>O caminho dos dados no Backend/Frontend</span>
+            </div>
+            <div class="section-content">
+                <div class="flow">
+                    Usuário digita as notas na Interface Gráfica<br>
+                    ⬇<br>
+                    Clique no Botão dispara o Evento (Trigger)<br>
+                    ⬇<br>
+                    Sistema valida nulidade (Campos Vazios)<br>
+                    ⬇<br>
+                    Sistema tenta converter Texto para Float (Trata Erros)<br>
+                    ⬇<br>
+                    Sistema valida intervalo lógico (0 a 10)<br>
+                    ⬇<br>
+                    Matemática: Calcula a Média Aritmética<br>
+                    ⬇<br>
+                    Regra de Negócio define Situação, Cor e Emoji<br>
+                    ⬇<br>
+                    Atualiza as propriedades do Label para exibir o Resultado
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 4 -->
+        <div class="section">
+            <div class="section-title">
+                🎨 ETAPA 4 — PROJETO DA INTERFACE
+                <span>Design e Layout no Drag and Drop do Anvil</span>
+            </div>
+            <div class="section-content">
+                <div class="layout-visual">
+                    <div class="modern-app">
+                        <div class="app-header">
+                            <h2>📚 CALCULADORA DE MÉDIAS</h2>
+                            <span style="font-size: 0.8rem; color: #764ba2; background: #f3e8ff; padding: 4px 10px; border-radius: 12px; font-weight: bold;">App Escolar V1.0</span>
+                        </div>
+
+                        <div class="input-group">
+                            <label>📖 NOTA 1</label>
+                            <input type="number" placeholder="Digite a nota 1 (0 a 10)" disabled>
+                        </div>
+                        <div class="input-group">
+                            <label>📖 NOTA 2</label>
+                            <input type="number" placeholder="Digite a nota 2 (0 a 10)" disabled>
+                        </div>
+                        <div class="input-group">
+                            <label>📖 NOTA 3</label>
+                            <input type="number" placeholder="Digite a nota 3 (0 a 10)" disabled>
+                        </div>
+
+                        <button class="calculate-btn">🚀 CALCULAR MÉDIA</button>
+
+                        <div class="result-area">
+                            <div style="font-size: 0.85rem; color: #718096; font-weight: bold; margin-bottom: 5px;">RESULTADO FINAL</div>
+                            <div style="color: #4a5568; font-size: 1.2rem; font-weight: bold;">Aguardando cálculo...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 5 -->
+        <div class="section">
+            <div class="section-title">
+                🧩 ETAPA 5 — COMPONENTES DO ANVIL
+                <span>Propriedades exatas usadas no construtor visual</span>
+            </div>
+            <div class="section-content">
+                <p style="margin-bottom: 1rem; color: #666;"><em>Clique em cada componente para expandir e ver as configurações que devem ser feitas no painel Properties da direita no Anvil.</em></p>
+                
+                <div class="component-list">
+                    <!-- Componente 1 -->
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            1️⃣ Título Superior (Label) <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Toolbox Component</td><td>Label</td></tr>
+                                <tr><td>Name (ID no Código)</td><td>label_titulo</td></tr>
+                                <tr><td>Text</td><td>📚 CALCULADORA DE MÉDIAS</td></tr>
+                                <tr><td>Align</td><td>center</td></tr>
+                                <tr><td>Bold</td><td>True</td></tr>
+                                <tr><td>Font Size</td><td>24</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Componente Inputs -->
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            2️⃣ Rótulos das Notas (Labels) <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Toolbox Component</td><td>Label (Criar 3 unidades)</td></tr>
+                                <tr><td>Name (ID no Código)</td><td>label_nota_1 / label_nota_2 / label_nota_3</td></tr>
+                                <tr><td>Text</td><td>Nota 1: / Nota 2: / Nota 3:</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            3️⃣ Entradas de Texto (TextBoxes) <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Toolbox Component</td><td>TextBox (Criar 3 unidades)</td></tr>
+                                <tr><td>Name (ID no Código)</td><td>text_box_nota_1 / text_box_nota_2 / text_box_nota_3</td></tr>
+                                <tr><td>Placeholder</td><td>Digite a nota... (0-10)</td></tr>
+                                <tr><td>Type</td><td>number</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Componente Botão -->
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            4️⃣ Botão de Ação Principal (Button) <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Toolbox Component</td><td>Button</td></tr>
+                                <tr><td>Name (ID no Código)</td><td>button_calcular</td></tr>
+                                <tr><td>Text</td><td>CALCULAR</td></tr>
+                                <tr><td>Role</td><td>primary-color</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Componente Resultado -->
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            5️⃣ Rótulo de Saída (Label) <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Toolbox Component</td><td>Label</td></tr>
+                                <tr><td>Name (ID no Código)</td><td>label_resultado</td></tr>
+                                <tr><td>Text</td><td>(deixar vazio)</td></tr>
+                                <tr><td>Align</td><td>center</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 6 -->
+        <div class="section">
+            <div class="section-title">
+                ⚡ ETAPA 6 — CRIANDO O EVENTO
+                <span>Como conectar a Interface Gráfica ao Código Python</span>
+            </div>
+            <div class="section-content">
+                <div class="card" style="border-left-color: #f39c12; background: #fffdf5;">
+                    <ol style="margin-left: 1.5rem; line-height: 2;">
+                        <li>No editor visual (Design), clique sobre o botão <strong>CALCULAR</strong> para selecioná-lo.</li>
+                        <li>Olhe para o painel de propriedades à direita e desça até o final.</li>
+                        <li>Encontre a seção <strong>Events ⚡</strong>.</li>
+                        <li>Ao lado do evento <code>click</code>, clique na seta/caixa azul para criar a função.</li>
+                        <li>O Anvil abrirá automaticamente a aba <strong>Code</strong> com a função <code>def button_calcular_click...</code> criada.</li>
+                        <li>Cole o código da <strong>Etapa 7</strong> dentro desta função.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 7 -->
+        <div class="section">
+            <div class="section-title">
+                💻 ETAPA 7 — CÓDIGO PYTHON COMPLETO
+                <span>Código Corrigido e Otimizado - Copie e Cole</span>
+            </div>
+            <div class="section-content">
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>📄 form1.py - Método do Botão</span>
+                        <button class="copy-btn" onclick="copyCode()">📋 Copiar Código</button>
+                    </div>
+                    <div class="code-content">
+                        <pre id="full-code" style="color: #d4d4d4;">
+<span class="keyword">def</span> <span class="function">button_calcular_click</span>(self, **event_args):
+    <span class="comment">"""
+    ========================================
+    EVENTO: click do botão CALCULAR
+    DISPARADO QUANDO: Usuário clica no botão
+    ========================================
+    """</span>
+
+    <span class="comment"># =========================
+    # ENTRADA DE DADOS
+    # Captura os valores digitados nos campos
+    # =========================</span>
+
+    nota1_texto = self.text_box_nota_1.text
+    nota2_texto = self.text_box_nota_2.text
+    nota3_texto = self.text_box_nota_3.text
+
+    <span class="comment"># =========================
+    # VALIDAÇÃO DE CAMPOS VAZIOS
+    # Verifica se o usuário preencheu todas as notas
+    # =========================</span>
+
+    <span class="keyword">if not</span> nota1_texto <span class="keyword">or not</span> nota2_texto <span class="keyword">or not</span> nota3_texto:
+        self.label_resultado.text = <span style="color: #ce9178;">"⚠️ Preencha todas as notas!"</span>
+        self.label_resultado.foreground = <span style="color: #ce9178;">"#e74c3c"</span>  <span class="comment"># Vermelho</span>
+        <span class="keyword">return</span>  <span class="comment"># Interrompe a execução</span>
+
+    <span class="comment"># =========================
+    # CONVERSÃO PARA NÚMERO
+    # Tenta converter texto para número decimal
+    # =========================</span>
+
+    <span class="keyword">try</span>:
+        nota1 = float(nota1_texto)
+        nota2 = float(nota2_texto)
+        nota3 = float(nota3_texto)
+
+    <span class="keyword">except</span> (ValueError, TypeError):
+        <span class="comment"># Se não conseguir converter (letras, símbolos ou valores vazios)</span>
+        self.label_resultado.text = <span style="color: #ce9178;">"❌ Digite apenas números válidos!"</span>
+        self.label_resultado.foreground = <span style="color: #ce9178;">"#e74c3c"</span>
+        <span class="keyword">return</span>
+
+    <span class="comment"># =========================
+    # VALIDAÇÃO DO INTERVALO (0 a 10)
+    # As notas devem estar entre 0 e 10
+    # =========================</span>
+
+    <span class="keyword">if</span> nota1 &lt; 0 <span class="keyword">or</span> nota1 &gt; 10:
+        self.label_resultado.text = <span style="color: #ce9178;">"❌ Nota 1 inválida! Use valores de 0 a 10"</span>
+        self.label_resultado.foreground = <span style="color: #ce9178;">"#e74c3c"</span>
+        <span class="keyword">return</span>
+
+    <span class="keyword">if</span> nota2 &lt; 0 <span class="keyword">or</span> nota2 &gt; 10:
+        self.label_resultado.text = <span style="color: #ce9178;">"❌ Nota 2 inválida! Use valores de 0 a 10"</span>
+        self.label_resultado.foreground = <span style="color: #ce9178;">"#e74c3c"</span>
+        <span class="keyword">return</span>
+
+    <span class="keyword">if</span> nota3 &lt; 0 <span class="keyword">or</span> nota3 &gt; 10:
+        self.label_resultado.text = <span style="color: #ce9178;">"❌ Nota 3 inválida! Use valores de 0 a 10"</span>
+        self.label_resultado.foreground = <span style="color: #ce9178;">"#e74c3c"</span>
+        <span class="keyword">return</span>
+
+    <span class="comment"># =========================
+    # PROCESSAMENTO
+    # Calcula a média aritmética
+    # =========================</span>
+
+    media = (nota1 + nota2 + nota3) / 3
+
+    <span class="comment"># =========================
+    # REGRA DE NEGÓCIO
+    # Define a situação baseada na média
+    # =========================</span>
+
+    <span class="keyword">if</span> media &gt;= 7:
+        situacao = <span style="color: #ce9178;">"APROVADO"</span>
+        cor = <span style="color: #ce9178;">"#27ae60"</span>      <span class="comment"># Verde</span>
+        emoji = <span style="color: #ce9178;">"✅"</span>
+
+    <span class="keyword">elif</span> media &gt;= 5:
+        situacao = <span style="color: #ce9178;">"RECUPERAÇÃO"</span>
+        cor = <span style="color: #ce9178;">"#f39c12"</span>      <span class="comment"># Laranja</span>
+        emoji = <span style="color: #ce9178;">"⚠️"</span>
+
+    <span class="keyword">else</span>:
+        situacao = <span style="color: #ce9178;">"REPROVADO"</span>
+        cor = <span style="color: #ce9178;">"#e74c3c"</span>      <span class="comment"># Vermelho</span>
+        emoji = <span style="color: #ce9178;">"❌"</span>
+
+    <span class="comment"># =========================
+    # SAÍDA
+    # Exibe o resultado formatado na tela
+    # =========================</span>
+
+    self.label_resultado.text = <span style="color: #ce9178;">f"{emoji} Média: {media:.1f} - {situacao} {emoji}"</span>
+    self.label_resultado.foreground = cor
+    self.label_resultado.font_size = 18
+    self.label_resultado.bold = <span class="keyword">True</span>
+
+    <span class="comment"># Debug no console do ANVIL</span>
+    print(<span style="color: #ce9178;">f"Média calculada: {media:.2f} - Situação: {situacao}"</span>)</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 8 -->
+        <div class="section">
+            <div class="section-title">
+                📖 ETAPA 8 — EXPLICAÇÃO DETALHADA DO CÓDIGO
+                <span>Entenda a lógica linha por linha</span>
+            </div>
+            <div class="section-content">
+                <div class="requirements-grid">
+                    <div class="card">
+                        <h3>📥 ENTRADA</h3>
+                        <p>Usamos <code>self.[id_do_componente].text</code> para puxar os dados. No Anvil, <code>self</code> é a tela atual, e o ID é o nome que você deu ao componente no painel Properties.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🛡️ VALIDAÇÃO SEGURA</h3>
+                        <p>O uso de <code>if not nota_texto:</code> é a forma "Pythônica" ideal para verificar nulos e strings vazias. Se o usuário esquecer um campo, o <code>return</code> cancela o cálculo na hora!</p>
+                    </div>
+                    <div class="card">
+                        <h3>⚠️ TRATAMENTO DE ERROS</h3>
+                        <p>O bloco <code>try/except (ValueError, TypeError)</code> é vital. Ele tenta converter texto para Decimal. Se o usuário digitar "ABC" (Value) ou enviar objeto nulo (Type), o except entra em ação e impede que o app trave ("quebre").</p>
+                    </div>
+                    <div class="card">
+                        <h3>📏 LIMITE DE NOTAS</h3>
+                        <p>Usando operadores lógicos <code>if nota < 0 or nota > 10:</code>, garantimos que a matemática de notas não seja burlada pelo usuário.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🧮 PROCESSAMENTO & NEGÓCIO</h3>
+                        <p>Variáveis temporárias guardam a matemática <code>media = (n1+n2+n3)/3</code>. Depois, o famoso <code>if / elif / else</code> decide dinamicamente as strings de texto e cores hexadecimais.</p>
+                    </div>
+                    <div class="card">
+                        <h3>📤 SAÍDA VISUAL</h3>
+                        <p>Manipulamos o <code>label_resultado</code> injetando a F-String (para formatar texto e variáveis juntos). Usamos <code>.foreground</code> no Python para pintar o texto do frontend em tempo real!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESUMO -->
+        <div class="summary-box">
+            <h2>🎯 RESUMO DO QUE VOCÊ APRENDEU</h2>
+            <p style="color: #cbd5e0; font-size: 1.1rem; margin-top: 5px;">Os principais insights desta construção</p>
+            
+            <div class="summary-grid">
+                <div class="summary-item">✅ Capturar dados do usuário pelo ID dos TextBoxes.</div>
+                <div class="summary-item">✅ Otimizar validação com "if not" (pythonic way).</div>
+                <div class="summary-item">✅ Proteger o app de crashs usando Try/Except.</div>
+                <div class="summary-item">✅ Interromper execuções falhas usando "return".</div>
+                <div class="summary-item">✅ Aplicar regras condicionais if/elif/else lógicas.</div>
+                <div class="summary-item">✅ Alterar Cores e Tamanho de Fonte direto no Python.</div>
+                <div class="summary-item">✅ Formatar floats usando f-strings ({media:.1f}).</div>
+                <div class="summary-item">✅ Imprimir logs internos usando print() para Debug.</div>
+            </div>
+            <p style="margin-top: 2.5rem; font-size: 1.2rem; font-weight: bold; color: #ffd700;">🚀 Missão Cumprida! Você estruturou um app Web Funcional, Seguro e Visualmente Rico!</p>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">✅ Código copiado com sucesso!</div>
+
+    <script>
+        // Função de Dropdown para Tabela de Propriedades
+        function toggleProps(header) {
+            const propsDiv = header.nextElementSibling;
+            propsDiv.classList.toggle('active');
+            const arrow = header.querySelector('span');
+            if (propsDiv.classList.contains('active')) {
+                arrow.innerHTML = '▲';
+                header.style.background = '#e2e8f0';
+            } else {
+                arrow.innerHTML = '▼';
+                header.style.background = '#f8f9fa';
+            }
+        }
+
+        // Função Limpa para Copiar Texto Sem as Tags HTML de colorização
+        function copyCode() {
+            const codeElement = document.getElementById('full-code');
+            const code = codeElement.innerText; // Pega só o texto visível
+            
+            navigator.clipboard.writeText(code).then(() => {
+                const toast = document.getElementById('toast');
+                toast.style.display = 'block';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 3000);
+            }).catch(err => {
+                console.error('Erro ao copiar: ', err);
+                alert('Erro ao copiar código. Pressione Ctrl+C manualmente.');
+            });
+        }
+    </script>
+</body>
+</html>

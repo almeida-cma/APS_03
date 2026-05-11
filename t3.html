@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modelagem de Sistemas | Notações UML, BPMN e DER - Ensino Correto</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: #f1f4f8;
+            color: #1e2a3a;
+            line-height: 1.5;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0a2f3f, #1a5d74);
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+
+        header h1 {
+            font-size: 2rem;
+        }
+
+        nav {
+            background: white;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            font-weight: 600;
+            border-radius: 40px;
+            cursor: pointer;
+            color: #1a5d74;
+            transition: 0.2s;
+        }
+
+        .nav-btn.active, .nav-btn:hover {
+            background: #1a5d74;
+            color: white;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .section {
+            display: none;
+            animation: fade 0.2s ease;
+        }
+
+        .section.active-section {
+            display: block;
+        }
+
+        @keyframes fade {
+            from { opacity: 0; transform: translateY(6px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 1.8rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+        }
+
+        .card h2 {
+            border-left: 6px solid #2b7a6e;
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+            color: #0e4b5e;
+        }
+
+        /* ========== ESTILOS DAS NOTAÇÕES GRÁFICAS ========== */
+        .diagram-container {
+            background: #fefcf5;
+            border: 1px solid #dce5ec;
+            border-radius: 28px;
+            padding: 1.8rem;
+            margin: 1.5rem 0;
+        }
+
+        .diagram-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #0f5b6e;
+            margin-bottom: 1.2rem;
+            border-bottom: 2px solid #cbd5e1;
+            display: inline-block;
+        }
+
+        /* ---------- DER (Modelo Entidade-Relacionamento) ---------- */
+        .der-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: #f2efe4;
+            border-radius: 24px;
+        }
+
+        .entity {
+            background: #cfe3f5;
+            border: 2px solid #2c5282;
+            padding: 0.8rem 1.8rem;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 120px;
+            box-shadow: 2px 2px 0 #a0bbd9;
+        }
+
+        .attribute-circle {
+            background: #ffe3b3;
+            border: 2px solid #b46f1a;
+            border-radius: 50%;
+            width: 90px;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            flex-direction: column;
+            padding: 0.5rem;
+        }
+
+        .relationship-diamond {
+            width: 0;
+            height: 0;
+            border-left: 40px solid transparent;
+            border-right: 40px solid transparent;
+            border-bottom: 70px solid #f5c6a0;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .relationship-diamond span {
+            position: absolute;
+            top: 30px;
+            left: -28px;
+            width: 56px;
+            text-align: center;
+            font-weight: bold;
+            color: #4a2e00;
+        }
+
+        .cardinality {
+            font-family: monospace;
+            font-weight: bold;
+            background: #e2e8f0;
+            padding: 0.2rem 0.6rem;
+            border-radius: 30px;
+        }
+
+        .der-line {
+            font-size: 1.4rem;
+        }
+
+        /* ---------- BPMN elementos corretos ---------- */
+        .bpmn-canvas {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 0.8rem;
+            background: #eef2f5;
+            padding: 1.8rem;
+            border-radius: 28px;
+        }
+
+        .bpmn-start-event {
+            background: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            border: 2px solid #2b6e3c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+
+        .bpmn-task {
+            background: #fee2b5;
+            border-radius: 12px;
+            padding: 0.5rem 1rem;
+            border: 1px solid #b46f1a;
+            font-weight: 500;
+        }
+
+        .bpmn-gateway {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 2px solid #a13e2f;
+            transform: rotate(45deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .bpmn-gateway span {
+            transform: rotate(-45deg);
+            font-size: 0.7rem;
+        }
+
+        .bpmn-end-event {
+            background: #2b6e3c;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            border: 2px solid #0f3b1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+        }
+
+        /* ---------- DIAGRAMA DE CLASSES UML ---------- */
+        .class-uml-grid {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .class-box {
+            background: #fff9eb;
+            border: 1.5px solid #8b6946;
+            border-radius: 8px;
+            width: 260px;
+        }
+        .class-name {
+            background: #e6d5b8;
+            padding: 0.6rem;
+            text-align: center;
+            font-weight: bold;
+            border-bottom: 1px solid #8b6946;
+        }
+        .class-attr, .class-method {
+            padding: 0.4rem 0.8rem;
+            font-family: monospace;
+            border-top: 1px solid #f0e4ce;
+        }
+
+        /* ---------- DIAGRAMA DE CASO DE USO ---------- */
+        .uc-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .actor-icon {
+            background: #f3e5cc;
+            border-radius: 60px;
+            padding: 0.5rem 1rem;
+            text-align: center;
+        }
+        .system-box {
+            border: 2px solid #2c7a6e;
+            border-radius: 20px;
+            padding: 1rem;
+            min-width: 240px;
+        }
+        .use-case {
+            background: white;
+            border-radius: 40px;
+            padding: 0.3rem 1rem;
+            margin: 0.4rem 0;
+            border: 1px solid #2c7a6e;
+            text-align: center;
+        }
+
+        .faq-item {
+            background: #f0f3f6;
+            margin: 0.8rem 0;
+            padding: 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        .faq-answer {
+            display: none;
+            margin-top: 0.8rem;
+            padding: 0.8rem;
+            background: #e3f0ec;
+            border-radius: 16px;
+        }
+        .faq-answer.show {
+            display: block;
+        }
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #5a6e7a;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>📐 Modelagem de Sistemas | Tema 3</h1>
+    <p>UML · BPMN · DER · Notações corretas para ensino</p>
+</header>
+
+<nav>
+    <button class="nav-btn" data-section="intro">🧠 Introdução</button>
+    <button class="nav-btn" data-section="der">🗄️ DER (Entidade-Relacionamento)</button>
+    <button class="nav-btn" data-section="bpmn">⚙️ BPMN 2.0</button>
+    <button class="nav-btn" data-section="uml">📐 UML (Caso/Classe)</button>
+    <button class="nav-btn" data-section="exercicios">✅ 10 Exercícios</button>
+</nav>
+
+<div class="container">
+    <!-- INTRO -->
+    <div id="intro" class="section active-section">
+        <div class="card">
+            <h2>🧠 Modelagem de Sistemas</h2>
+            <p>Modelar é criar <strong>representações visuais padronizadas</strong> utilizando notações específicas: <strong>UML</strong> (sistemas de software), <strong>BPMN</strong> (processos de negócio) e <strong>DER</strong> (banco de dados). A notação correta é essencial para comunicação sem ambiguidades.</p>
+        </div>
+    </div>
+
+    <!-- ==================== DER COM FORMAS CORRETAS ==================== -->
+    <div id="der" class="section">
+        <div class="card">
+            <h2>🗄️ DER - Entidade-Relacionamento (notação correta)</h2>
+            <div class="diagram-container">
+                <div class="diagram-title">📌 Entidades (retângulo) · Atributos (círculo/elipse) · Relacionamento (losango)</div>
+                <div class="der-wrapper">
+                    <div class="entity">CLIENTE</div>
+                    <div class="attribute-circle">🔑 id_cliente<br>(PK)</div>
+                    <div class="attribute-circle">nome</div>
+                    <div class="der-line">→</div>
+                    <div class="relationship-diamond"><span>FAZ</span></div>
+                    <div class="der-line">←</div>
+                    <div class="entity">PEDIDO</div>
+                    <div class="attribute-circle">num_pedido<br>(PK)</div>
+                    <div class="attribute-circle">data</div>
+                </div>
+                <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 1rem;">
+                    <span class="cardinality">(1,N) —— (1,1)</span>
+                    <span><strong>Cardinalidade:</strong> Um CLIENTE faz N PEDIDOS</span>
+                </div>
+                <p><strong>🔑 Chave primária (PK):</strong> identifica unicamente cada entidade. <strong>Chave estrangeira (FK)</strong>: referência entre tabelas (ex: id_cliente em PEDIDO).</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== BPMN COM FORMAS CORRETAS ==================== -->
+    <div id="bpmn" class="section">
+        <div class="card">
+            <h2>⚙️ BPMN - Business Process Model and Notation</h2>
+            <div class="diagram-container">
+                <div class="diagram-title">Evento (círculo) · Tarefa (retângulo arredondado) · Gateway (losango)</div>
+                <div class="bpmn-canvas">
+                    <div class="bpmn-start-event">Início</div>
+                    <span>→</span>
+                    <div class="bpmn-task">📄 Solicitar compra</div>
+                    <span>→</span>
+                    <div class="bpmn-gateway"><span>✔✘</span></div>
+                    <span>→ (aprovado)</span>
+                    <div class="bpmn-task">✅ Finalizar pedido</div>
+                    <span>→</span>
+                    <div class="bpmn-end-event">Fim</div>
+                </div>
+                <p><strong>Gateway (losango):</strong> representa decisão/exclusão. Fluxo de sequência (setas) conecta os elementos.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== UML - CASO DE USO E CLASSES ==================== -->
+    <div id="uml" class="section">
+        <div class="card">
+            <h2>📐 UML - Diagrama de Casos de Uso</h2>
+            <div class="diagram-container">
+                <div class="uc-container">
+                    <div class="actor-icon">🧑‍💼 «ator» <br>Usuário</div>
+                    <div class="system-box">
+                        <div style="text-align:center; font-weight:bold;">Sistema de Tarefas</div>
+                        <div class="use-case">(UC01) Cadastrar tarefa</div>
+                        <div class="use-case">(UC02) Listar tarefas</div>
+                        <div class="use-case">(UC03) Concluir tarefa</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📐 UML - Diagrama de Classes (visibilidade e multiplicidade)</h2>
+            <div class="diagram-container">
+                <div class="class-uml-grid">
+                    <div class="class-box">
+                        <div class="class-name">Usuario</div>
+                        <div class="class-attr">- id: int</div>
+                        <div class="class-attr">- nome: string</div>
+                        <div class="class-method">+ criarTarefa(): void</div>
+                        <div class="class-method">+ listarTarefas(): List</div>
+                    </div>
+                    <div class="class-box">
+                        <div class="class-name">Tarefa</div>
+                        <div class="class-attr">- id: int</div>
+                        <div class="class-attr">- titulo: string</div>
+                        <div class="class-attr">- status: String</div>
+                        <div class="class-method">+ concluir(): void</div>
+                    </div>
+                </div>
+                <div class="association-line" style="text-align:center; margin-top:1rem;">Usuario 1 ─────── 0..* Tarefa</div>
+                <p><strong>Visibilidade:</strong> - (privado), + (público). Multiplicidade: um usuário pode ter zero ou muitas tarefas.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- EXERCÍCIOS -->
+    <div id="exercicios" class="section">
+        <div class="card">
+            <h2>✅ 10 Exercícios com notações</h2>
+            <div class="faq-item"><strong>1. O que é modelagem de sistemas e qual sua importância?</strong><div class="faq-answer">Representação visual usando notações padronizadas (UML/BPMN/DER). Evita retrabalho e alinha comunicação.</div></div>
+            <div class="faq-item"><strong>2. Quais os princípios da modelagem?</strong><div class="faq-answer">Abstração, generalização, especificação, composição, clareza, consistência.</div></div>
+            <div class="faq-item"><strong>3. Cite 3 tipos de modelos</strong><div class="faq-answer">Modelo conceitual, modelo de dados (DER), modelo de casos de uso, modelo de sequência.</div></div>
+            <div class="faq-item"><strong>4. Importância dos diagramas UML</strong><div class="faq-answer">Linguagem padrão para especificar, visualizar e documentar sistemas de software.</div></div>
+            <div class="faq-item"><strong>5. Como o BPM ajuda a identificar melhorias?</strong><div class="faq-answer">Mostra fluxos reais, gargalos, retrabalhos e atividades sem valor agregado.</div></div>
+            <div class="faq-item"><strong>6. Elementos do DER</strong><div class="faq-answer">Entidade (retângulo), Atributo (círculo/elipse), Relacionamento (losango), Chave primária, cardinalidade.</div></div>
+            <div class="faq-item"><strong>7. Ferramentas de modelagem?</strong><div class="faq-answer">Draw.io, Lucidchart, Astah, Visual Paradigm, Enterprise Architect.</div></div>
+            <div class="faq-item"><strong>8. Por que validar os modelos?</strong><div class="faq-answer">Para garantir que os modelos reflitam os requisitos reais e evitar inconsistências.</div></div>
+            <div class="faq-item"><strong>9. O que é modelagem ágil?</strong><div class="faq-answer">Modelos leves, colaborativos e evolutivos, priorizando valor de negócio e feedback contínuo.</div></div>
+            <div class="faq-item"><strong>10. Desafios em sistemas complexos?</strong><div class="faq-answer">Interdependências, comportamento emergente, incerteza e necessidade de simulação baseada em agentes.</div></div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    📐 Notações conforme padrões: UML 2.5, BPMN 2.0, DER (Peter Chen). Material didático para o Tema 3.
+</footer>
+
+<script>
+    const sections = document.querySelectorAll('.section');
+    const navBtns = document.querySelectorAll('.nav-btn');
+
+    function showSection(id) {
+        sections.forEach(s => s.classList.remove('active-section'));
+        document.getElementById(id)?.classList.add('active-section');
+        navBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.section === id));
+    }
+
+    navBtns.forEach(btn => btn.addEventListener('click', () => showSection(btn.dataset.section)));
+
+    document.querySelectorAll('.faq-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const answer = item.querySelector('.faq-answer');
+            if (answer) answer.classList.toggle('show');
+        });
+    });
+
+    if (!window.location.hash) showSection('intro');
+</script>
+</body>
+</html>

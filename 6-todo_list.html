@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANVIL WORKS - Smart To-Do List</title>
+    <style>
+        :root {
+            /* Paleta Clean / Produtividade */
+            --primary: #2563eb; /* Azul Royal */
+            --secondary: #1e40af;
+            --accent: #3b82f6; 
+            --danger: #ef4444; /* Vermelho Deleção */
+            --success: #10b981; /* Verde Concluído */
+            --dark: #1f2937;
+            --light: #f3f4f6;
+            --white: #ffffff;
+            --border: #e5e7eb;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: var(--white);
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            border-top: 5px solid var(--primary);
+        }
+
+        .header h1 {
+            color: var(--dark);
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .header h1 span { color: var(--primary); }
+        .header p { color: #6b7280; font-size: 1.2rem; font-weight: 500; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem 3rem 2rem; }
+
+        /* Seções */
+        .section {
+            background: var(--white); border-radius: 12px; margin-bottom: 2.5rem;
+            overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); transition: transform 0.3s ease;
+            border: 1px solid var(--border);
+        }
+        .section:hover { transform: translateY(-3px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+
+        .section-title {
+            background: var(--white); color: var(--dark); padding: 1.2rem 2rem; font-size: 1.4rem; font-weight: bold;
+            display: flex; align-items: center; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid var(--border);
+        }
+
+        .section-title span {
+            background: var(--primary); color: var(--white); padding: 0.3rem 1rem;
+            border-radius: 20px; font-size: 0.85rem; margin-left: auto; font-weight: 600;
+        }
+
+        .section-content { padding: 2rem; }
+
+        /* Cards */
+        .requirements-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+        .card {
+            background: var(--white); border: 1px solid var(--border); border-top: 4px solid var(--primary);
+            padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); transition: all 0.3s ease;
+        }
+        .card:hover { border-top-color: var(--success); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
+        .card h3 { color: var(--dark); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 10px; }
+        .card p { color: #4b5563; }
+
+        /* Tabelas */
+        .rule-table { width: 100%; border-collapse: collapse; border-radius: 8px; overflow: hidden; }
+        .rule-table th, .rule-table td { border: 1px solid var(--border); padding: 1rem; text-align: left; font-size: 1rem; }
+        .rule-table th { background: #f9fafb; color: var(--dark); font-weight: 600; }
+
+        /* Fluxo */
+        .flow {
+            background: #f0fdf4; padding: 2rem; border-radius: 8px; text-align: center;
+            font-family: 'Courier New', monospace; font-size: 1.1rem; font-weight: bold;
+            color: var(--success); border: 2px dashed #bbf7d0; line-height: 2;
+        }
+
+        /* Mockup do App */
+        .layout-visual {
+            background: #e2e8f0; border-radius: 12px; padding: 3rem 2rem; position: relative; display: flex; justify-content: center;
+        }
+        .modern-app { background: var(--white); border-radius: 12px; padding: 2rem; width: 100%; max-width: 550px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+        
+        .app-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 1.5rem; color: var(--dark); display: flex; justify-content: space-between; align-items: center; }
+        .badge { background: #dbeafe; color: var(--primary); font-size: 0.8rem; padding: 4px 12px; border-radius: 20px; }
+
+        .input-group { display: flex; gap: 10px; margin-bottom: 10px; }
+        .input-field { flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; }
+        .btn-add { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+
+        .task-list { margin-top: 2rem; display: flex; flex-direction: column; gap: 10px; }
+        .task-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f9fafb; border: 1px solid var(--border); border-radius: 6px; }
+        .task-left { display: flex; align-items: center; gap: 10px; }
+        .task-title { font-weight: 500; color: var(--dark); }
+        .task-link { color: var(--primary); font-size: 0.85rem; text-decoration: none; background: #dbeafe; padding: 2px 8px; border-radius: 4px;}
+        .task-done { text-decoration: line-through; color: #9ca3af; }
+        .btn-del { color: var(--danger); background: #fee2e2; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.8rem;}
+
+        .export-area { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px dashed var(--border); display: flex; gap: 10px; justify-content: center; }
+        .btn-json { background: var(--white); color: var(--dark); border: 1px solid var(--border); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 5px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+
+        /* Componentes Dropdown */
+        .component-list { display: flex; flex-direction: column; gap: 1rem; }
+        .component-item { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+        .component-header { background: #f9fafb; padding: 1rem 1.5rem; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--dark); }
+        .component-props { padding: 0; display: none; background: var(--white); }
+        .component-props.active { display: block; }
+        .props-table { width: 100%; border-collapse: collapse; }
+        .props-table td { padding: 0.8rem 1.5rem; border-bottom: 1px solid var(--border); }
+        .props-table td:first-child { font-weight: 600; width: 35%; color: var(--primary); }
+        .props-table td:last-child { color: #4b5563; font-family: monospace; font-size: 1.05rem;}
+
+        /* Código */
+        .code-block { background: #1e1e1e; border-radius: 8px; overflow: hidden; }
+        .code-header { background: #2d2d2d; color: #e5e7eb; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; font-family: monospace; }
+        .code-content { padding: 1.5rem; overflow-x: auto; }
+        .code-content pre { margin: 0; font-family: 'Consolas', monospace; font-size: 0.95rem; line-height: 1.6; color: #d4d4d4; }
+        .code-content pre .keyword { color: #569cd6; } 
+        .code-content pre .comment { color: #6a9955; font-style: italic; } 
+        .code-content pre .function { color: #dcdcaa; } 
+        .code-content pre .string { color: #ce9178; } 
+        
+        .copy-btn { background: var(--primary); color: white; border: none; padding: 0.4rem 1rem; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .copy-btn:hover { background: var(--secondary); }
+
+        .summary-box { background: var(--primary); color: white; padding: 3rem; border-radius: 12px; text-align: center; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.2); }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .summary-item { background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--success); font-weight: 500; text-align: left; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Smart <span>To-Do List</span></h1>
+        <p>Guia Didático Completo - CRUD, JSON e Upload de Arquivos no Anvil</p>
+    </div>
+
+    <div class="container">
+        
+        <!-- ETAPA 1 -->
+        <div class="section">
+            <div class="section-title">
+                ✅ ETAPA 1 — REQUISITOS FUNCIONAIS
+                <span>O Motor do CRUD</span>
+            </div>
+            <div class="section-content">
+                <div class="requirements-grid">
+                    <div class="card">
+                        <h3>➕ CREATE & READ</h3>
+                        <p>O usuário deve poder digitar uma Tarefa e um Link opcional. A tarefa deve aparecer em uma lista visual imediatamente.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🔄 UPDATE</h3>
+                        <p>Cada tarefa deve possuir uma caixa de seleção (Checkbox). Ao marcá-la, a tarefa muda para o status de "Concluída".</p>
+                    </div>
+                    <div class="card">
+                        <h3>🗑️ DELETE</h3>
+                        <p>O usuário deve ser capaz de remover tarefas específicas da lista permanentemente através de um botão de exclusão.</p>
+                    </div>
+                    <div class="card">
+                        <h3>💾 EXPORT & IMPORT</h3>
+                        <p>Como os dados ficam em memória RAM temporária, o app deve permitir baixar a lista como arquivo `.json` e carregá-la de volta depois.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 2 -->
+        <div class="section">
+            <div class="section-title">
+                📋 ETAPA 2 — REGRAS DE NEGÓCIO E DADOS
+                <span>Estrutura JSON (Dicionário)</span>
+            </div>
+            <div class="section-content">
+                <p style="margin-bottom: 1rem;">Para o Anvil (Python) entender nossos dados, e para o JSON funcionar, cada Tarefa não é um simples texto, mas um <b>Dicionário</b> com chaves específicas:</p>
+                <table class="rule-table">
+                    <thead>
+                        <tr><th>Chave (Key)</th><th>Tipo de Dado</th><th>Descrição no Sistema</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><b>id</b></td><td>Inteiro ou Texto</td><td>Identificador único (Ex: timestamp ou contador) para acharmos a tarefa na hora de deletar.</td></tr>
+                        <tr><td><b>descricao</b></td><td>String (Texto)</td><td>O nome da tarefa. (Ex: "Comprar pão"). Não pode ser vazio.</td></tr>
+                        <tr><td><b>link</b></td><td>String (URL)</td><td>Opcional. Um link para referência. (Ex: "https://...").</td></tr>
+                        <tr><td><b>feita</b></td><td>Booleano (True/False)</td><td>Controla o Checkbox. True = Concluída / False = Pendente.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ETAPA 3 -->
+        <div class="section">
+            <div class="section-title">
+                🔄 ETAPA 3 — FLUXO DO SISTEMA
+                <span>A Lógica Circular do Reactivity</span>
+            </div>
+            <div class="section-content">
+                <div class="flow">
+                    O App começa com uma Lista Vazia no Python: <code>self.tarefas = []</code><br>
+                    ⬇<br>
+                    Usuário clica em "Adicionar": Cria um Dicionário e insere na Lista<br>
+                    ⬇<br>
+                    Função <code>renderizar_lista()</code> entra em ação!<br>
+                    ⬇<br>
+                    1. Limpa o painel visual 🧹<br>
+                    2. Lê o <code>self.tarefas</code> do zero 📖<br>
+                    3. Desenha Checkbox, Texto, Link e Botão Deletar para cada item 🎨<br>
+                    ⬇<br>
+                    Usuário deleta ou altera status -> Altera a Lista Python -> Chama o <code>renderizar_lista()</code> novamente!
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 4 -->
+        <div class="section">
+            <div class="section-title">
+                🎨 ETAPA 4 — PROJETO DA INTERFACE
+                <span>Design de Componentes</span>
+            </div>
+            <div class="section-content">
+                <div class="layout-visual">
+                    <div class="modern-app">
+                        
+                        <div class="app-title">
+                            Minhas Tarefas <span class="badge">Sessão Ativa</span>
+                        </div>
+
+                        <!-- Entradas -->
+                        <div class="input-group">
+                            <input type="text" class="input-field" placeholder="O que precisa ser feito?">
+                        </div>
+                        <div class="input-group">
+                            <input type="text" class="input-field" placeholder="Link de referência (opcional)">
+                            <button class="btn-add">Adicionar</button>
+                        </div>
+
+                        <!-- Lista Renderizada -->
+                        <div class="task-list">
+                            <!-- Exemplo Não feito -->
+                            <div class="task-item">
+                                <div class="task-left">
+                                    <input type="checkbox">
+                                    <span class="task-title">Estudar Python e Anvil</span>
+                                    <a href="#" class="task-link">🔗 Link</a>
+                                </div>
+                                <button class="btn-del">X</button>
+                            </div>
+                            
+                            <!-- Exemplo Feito -->
+                            <div class="task-item">
+                                <div class="task-left">
+                                    <input type="checkbox" checked>
+                                    <span class="task-title task-done">Criar o modelo de dados</span>
+                                </div>
+                                <button class="btn-del">X</button>
+                            </div>
+                        </div>
+
+                        <!-- JSON Tools -->
+                        <div class="export-area">
+                            <button class="btn-json">⬇️ Baixar JSON</button>
+                            <button class="btn-json">⬆️ Importar JSON</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 5 -->
+        <div class="section">
+            <div class="section-title">
+                🧩 ETAPA 5 — COMPONENTES DO ANVIL
+                <span>O Novo Componente: FileLoader</span>
+            </div>
+            <div class="section-content">
+                <div class="component-list">
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            1️⃣ Entradas de Dados (TextBoxes) <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Componentes</td><td>TextBox (Duas unidades)</td></tr>
+                                <tr><td>Names</td><td>txt_descricao / txt_link</td></tr>
+                                <tr><td>Placeholder</td><td>"Digite a tarefa..." / "Cole a URL..."</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            2️⃣ Botão Adicionar <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Componente</td><td>Button</td></tr>
+                                <tr><td>Name</td><td>btn_adicionar</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            3️⃣ Contêiner da Lista <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Componente</td><td>LinearPanel</td></tr>
+                                <tr><td>Name</td><td>painel_tarefas</td></tr>
+                                <tr><td>Propósito</td><td>Fica vazio no Design. O código vai desenhar as tarefas dentro dele.</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            4️⃣ Botão de Exportar <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Componente</td><td>Button</td></tr>
+                                <tr><td>Name</td><td>btn_exportar</td></tr>
+                                <tr><td>Text</td><td>⬇️ Baixar JSON</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            5️⃣ Carregador de Arquivos (FileLoader) <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Componente</td><td>FileLoader</td></tr>
+                                <tr><td>Name</td><td>fl_importar</td></tr>
+                                <tr><td>Text</td><td>⬆️ Importar JSON</td></tr>
+                                <tr><td>Evento 'change'</td><td>Este componente dispara ação quando um arquivo é escolhido no PC.</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 6 -->
+        <div class="section">
+            <div class="section-title">
+                ⚡ ETAPA 6 — EVENTOS E IMPORTAÇÕES ESPECIAIS
+                <span>Preparando o Terreno</span>
+            </div>
+            <div class="section-content">
+                <div class="card" style="border-left-color: var(--danger);">
+                    <p><strong>🚨 ATENÇÃO PARA O CÓDIGO FONTE (Etapa 7):</strong></p>
+                    <ol style="margin-left: 20px; margin-top: 10px;">
+                        <li>Precisaremos importar o módulo nativo do Python: <code>import json</code>.</li>
+                        <li>Precisaremos do módulo de arquivos do Anvil: <code>import anvil.media</code>.</li>
+                        <li>Como criaremos os itens visuais da lista via código, precisaremos importar os construtores: <code>from anvil import CheckBox, Link, Button, FlowPanel, Label</code>.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 7 -->
+        <div class="section">
+            <div class="section-title">
+                💻 ETAPA 7 — CÓDIGO PYTHON COMPLETO
+                <span>Construção de UI Dinâmica e JSON - Copie e Cole</span>
+            </div>
+            <div class="section-content">
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>📄 form1.py</span>
+                        <button class="copy-btn" onclick="copyCode()">📋 Copiar Código</button>
+                    </div>
+                    <div class="code-content">
+                        <pre id="full-code">
+<span class="keyword">from</span> anvil <span class="keyword">import</span> *
+<span class="keyword">import</span> anvil.media
+<span class="keyword">import</span> json
+<span class="keyword">import</span> time  <span class="comment"># Para gerar IDs únicos</span>
+
+<span class="keyword">class</span> Form1(Form1Template):
+  
+  <span class="keyword">def</span> <span class="function">__init__</span>(self, **properties):
+    self.init_components(**properties)
+    
+    <span class="comment"># Memória Temporária (Simulando LocalStorage/Database)</span>
+    self.tarefas = []
+    
+    <span class="comment"># Renderiza a tela limpa inicial</span>
+    self.renderizar_lista()
+
+  <span class="comment"># ==========================================
+  # C R U D - CREATE (Adicionar)
+  # ==========================================</span>
+  <span class="keyword">def</span> <span class="function">btn_adicionar_click</span>(self, **event_args):
+    descricao = self.txt_descricao.text
+    link = self.txt_link.text
+    
+    <span class="comment"># Validação contra tarefas vazias</span>
+    <span class="keyword">if not</span> descricao:
+      <span class="keyword">return</span>
+      
+    <span class="comment"># Criação do Dicionário da Tarefa</span>
+    nova_tarefa = {
+      <span class="string">"id"</span>: int(time.time() * 1000), <span class="comment"># ID único baseado no relógio</span>
+      <span class="string">"descricao"</span>: descricao,
+      <span class="string">"link"</span>: link,
+      <span class="string">"feita"</span>: <span class="keyword">False</span>
+    }
+    
+    <span class="comment"># Adiciona na memória</span>
+    self.tarefas.append(nova_tarefa)
+    
+    <span class="comment"># Limpa os campos de texto</span>
+    self.txt_descricao.text = <span class="string">""</span>
+    self.txt_link.text = <span class="string">""</span>
+    
+    <span class="comment"># Recria a tela</span>
+    self.renderizar_lista()
+
+  <span class="comment"># ==========================================
+  # C R U D - READ (Montar a Lista Visual)
+  # ==========================================</span>
+  <span class="keyword">def</span> <span class="function">renderizar_lista</span>(self):
+    self.painel_tarefas.clear()
+    
+    <span class="keyword">for</span> t <span class="keyword">in</span> self.tarefas:
+      <span class="comment"># Cria uma "Linha" horizontal para a tarefa</span>
+      linha = FlowPanel(align=<span class="string">"justify"</span>)
+      
+      <span class="comment"># 1. Checkbox de Conclusão</span>
+      chk = CheckBox(text=t[<span class="string">"descricao"</span>], checked=t[<span class="string">"feita"</span>])
+      chk.tag = t[<span class="string">"id"</span>]  <span class="comment"># Guarda o ID para saber qual alterar</span>
+      chk.set_event_handler(<span class="string">'change'</span>, self.alterar_status)
+      
+      <span class="comment"># Efeito visual de riscado</span>
+      <span class="keyword">if</span> t[<span class="string">"feita"</span>]:
+        chk.foreground = <span class="string">"#9ca3af"</span>  <span class="comment"># Cinza</span>
+        
+      linha.add_component(chk)
+      
+      <span class="comment"># 2. Link opcional</span>
+      <span class="keyword">if</span> t[<span class="string">"link"</span>]:
+        lnk = Link(text=<span class="string">"🔗 Link"</span>, url=t[<span class="string">"link"</span>])
+        linha.add_component(lnk)
+        
+      <span class="comment"># 3. Botão de Deletar</span>
+      btn_del = Button(text=<span class="string">"❌"</span>, role=<span class="string">"primary-color"</span>, foreground=<span class="string">"#ef4444"</span>)
+      btn_del.tag = t[<span class="string">"id"</span>] <span class="comment"># Guarda o ID para deletar o certo</span>
+      btn_del.set_event_handler(<span class="string">'click'</span>, self.deletar_tarefa)
+      linha.add_component(btn_del)
+      
+      <span class="comment"># Adiciona a linha pronta no painel principal da tela</span>
+      self.painel_tarefas.add_component(linha)
+
+
+  <span class="comment"># ==========================================
+  # C R U D - UPDATE (Alterar Status)
+  # ==========================================</span>
+  <span class="keyword">def</span> <span class="function">alterar_status</span>(self, sender, **event_args):
+    id_alvo = sender.tag
+    
+    <span class="comment"># Busca a tarefa na lista e inverte o status</span>
+    <span class="keyword">for</span> t <span class="keyword">in</span> self.tarefas:
+      <span class="keyword">if</span> t[<span class="string">"id"</span>] == id_alvo:
+        t[<span class="string">"feita"</span>] = sender.checked
+        <span class="keyword">break</span>
+        
+    self.renderizar_lista()
+
+  <span class="comment"># ==========================================
+  # C R U D - DELETE (Remover)
+  # ==========================================</span>
+  <span class="keyword">def</span> <span class="function">deletar_tarefa</span>(self, sender, **event_args):
+    id_alvo = sender.tag
+    
+    <span class="comment"># Recria a lista de tarefas IGNORANDO a que tem o ID clicado</span>
+    self.tarefas = [t <span class="keyword">for</span> t <span class="keyword">in</span> self.tarefas <span class="keyword">if</span> t[<span class="string">"id"</span>] != id_alvo]
+    
+    self.renderizar_lista()
+
+
+  <span class="comment"># ==========================================
+  # JSON - EXPORTAR (Baixar)
+  # ==========================================</span>
+  <span class="keyword">def</span> <span class="function">btn_exportar_click</span>(self, **event_args):
+    <span class="comment"># Converte a Lista de Dicionários Python para texto JSON</span>
+    json_texto = json.dumps(self.tarefas, indent=4)
+    
+    <span class="comment"># Transforma o texto em um Arquivo (BlobMedia)</span>
+    arquivo = anvil.BlobMedia(<span class="string">'application/json'</span>, json_texto.encode(), name=<span class="string">'minhas_tarefas.json'</span>)
+    
+    <span class="comment"># Inicia o download no navegador do usuário</span>
+    anvil.media.download(arquivo)
+
+
+  <span class="comment"># ==========================================
+  # JSON - IMPORTAR (Upload FileLoader)
+  # ==========================================</span>
+  <span class="keyword">def</span> <span class="function">fl_importar_change</span>(self, file, **event_args):
+    <span class="comment"># Lê os bytes do arquivo e converte para texto normal (utf-8)</span>
+    conteudo_texto = file.get_bytes().decode(<span class="string">'utf-8'</span>)
+    
+    <span class="keyword">try</span>:
+      <span class="comment"># Transforma o texto JSON de volta para Lista de Dicionários Python</span>
+      self.tarefas = json.loads(conteudo_texto)
+      self.renderizar_lista()
+    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:
+      alert(<span class="string">"Arquivo JSON inválido ou corrompido!"</span>)
+</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 8 -->
+        <div class="section">
+            <div class="section-title">
+                📖 ETAPA 8 — EXPLICAÇÃO DETALHADA DO CÓDIGO
+                <span>Os segredos do código dinâmico</span>
+            </div>
+            <div class="section-content">
+                <div class="requirements-grid">
+                    <div class="card">
+                        <h3>🧱 FlowPanel vs LinearPanel</h3>
+                        <p>Na Etapa anterior usamos LinearPanel (coloca coisas uma embaixo da outra). Aqui, para a tarefa, criamos um <code>FlowPanel</code> via código. Ele enfileira componentes um <b>ao lado</b> do outro (Checkbox -> Link -> Lixeira), montando nossa "linha da tabela".</p>
+                    </div>
+                    <div class="card">
+                        <h3>🔗 A Mágica do <code>.tag</code> e do ID</h3>
+                        <p>Como criamos dezenas de tarefas, como saber qual deletar? Geramos um ID usando o relógio <code>time.time()</code>. Guardamos esse ID na propriedade <code>.tag</code> do Botão de Excluir. Quando ocorre o clique, lemos o tag e achamos a tarefa na lista!</p>
+                    </div>
+                    <div class="card">
+                        <h3>🧹 O padrão Delete em Python</h3>
+                        <p>No <code>deletar_tarefa</code>, nós usamos *List Comprehension*. Dizemos: <i>"A nova lista de tarefas é igual a antiga, MAS SÓ COPIE as tarefas cujo ID seja diferente do que eu cliquei."</i> Isso extingue a tarefa velha!</p>
+                    </div>
+                    <div class="card">
+                        <h3>📤 json.dumps() e BlobMedia</h3>
+                        <p><code>json.dumps()</code> "Despeja" (dumps) código Python virando texto puro em formato JSON. O <code>BlobMedia</code> é a forma do Anvil empacotar esse texto e avisar ao navegador: <i>"Isso é um arquivo .json, chame o download!"</i>.</p>
+                    </div>
+                    <div class="card">
+                        <h3>📥 json.loads() e FileLoader</h3>
+                        <p>O FileLoader é maravilhoso. Ele captura arquivos do PC. Com <code>file.get_bytes()</code> lemos o arquivo criptografado, decodificamos para texto, e o <code>json.loads()</code> "Carrega" (loads) o texto transformando-o novamente em uma Lista Python!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESUMO -->
+        <div class="summary-box">
+            <h2>🎯 RESUMO DO QUE VOCÊ APRENDEU</h2>
+            <p style="color: #bfdbfe; font-size: 1.1rem; margin-top: 5px;">A trindade do Front-end Moderno: Estado, Ciclo de Vida e APIs</p>
+            
+            <div class="summary-grid">
+                <div class="summary-item">✅ Estruturar o padrão C.R.U.D completo operando sobre listas locais.</div>
+                <div class="summary-item">✅ Criar interfaces modulares aninhando Componentes visuais dentro de Componentes.</div>
+                <div class="summary-item">✅ Gerar identificadores únicos temporários usando o módulo `time`.</div>
+                <div class="summary-item">✅ Converter estruturas de dados Python para textos universais via módulo `json`.</div>
+                <div class="summary-item">✅ Gerar arquivos para Download local no navegador via `anvil.media`.</div>
+                <div class="summary-item">✅ Capturar upload de arquivos do usuário usando o componente FileLoader.</div>
+            </div>
+            <p style="margin-top: 2.5rem; font-size: 1.2rem; font-weight: bold;">🚀 Engenharia Concluída! Com este conhecimento, você pode criar Notas, Agendas, Estoques e quase qualquer aplicativo de gestão de dados!</p>
+        </div>
+    </div>
+
+    <script>
+        function toggleProps(header) {
+            const propsDiv = header.nextElementSibling;
+            propsDiv.classList.toggle('active');
+        }
+
+        function copyCode() {
+            const codeElement = document.getElementById('full-code');
+            const code = codeElement.innerText;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                alert('💾 Código da To-Do List copiado! Que comece a produtividade!');
+            }).catch(err => {
+                console.error('Erro ao copiar: ', err);
+                alert('Erro ao copiar código. Pressione Ctrl+C manualmente.');
+            });
+        }
+    </script>
+</body>
+</html>

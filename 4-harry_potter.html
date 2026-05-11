@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANVIL WORKS - Quiz Harry Potter</title>
+    <style>
+        :root {
+            /* Paleta Mágica (Hogwarts Night) */
+            --primary: #1a1a2e;
+            --secondary: #16213e;
+            --accent: #d4af37; /* Dourado */
+            --danger: #740001; /* Gryffindor Red */
+            --success: #1a472a; /* Slytherin Green */
+            --dark: #0f0f1a;
+            --light: #f4f4f9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: rgba(15, 15, 26, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            margin-bottom: 2rem;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        .header h1 {
+            color: var(--accent);
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+            font-family: 'Georgia', serif;
+        }
+
+        .header p { color: #aaa; font-size: 1.2rem; font-weight: 500; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem 3rem 2rem; }
+
+        /* Seções */
+        .section {
+            background: white; border-radius: 15px; margin-bottom: 2.5rem;
+            overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3); transition: transform 0.3s ease;
+        }
+        .section:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
+
+        .section-title {
+            background: linear-gradient(135deg, var(--dark) 0%, #2a2a3e 100%);
+            color: var(--accent); padding: 1.2rem 2rem; font-size: 1.4rem; font-weight: bold;
+            display: flex; align-items: center; flex-wrap: wrap; gap: 10px; border-bottom: 2px solid var(--accent);
+        }
+
+        .section-title span {
+            background: var(--accent); color: var(--dark); padding: 0.3rem 1rem;
+            border-radius: 20px; font-size: 0.85rem; margin-left: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .section-content { padding: 2rem; }
+
+        /* Cards */
+        .requirements-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+        .card {
+            background: var(--light); border-left: 5px solid var(--accent); padding: 1.5rem;
+            border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: all 0.3s ease;
+        }
+        .card:hover { transform: translateX(5px); background: #fff; box-shadow: 0 8px 15px rgba(212,175,55,0.2); }
+        .card h3 { color: var(--secondary); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 10px; }
+
+        /* Tabelas */
+        .rule-table { width: 100%; border-collapse: collapse; border-radius: 10px; overflow: hidden; }
+        .rule-table th, .rule-table td { border: 1px solid #e2e8f0; padding: 1rem; text-align: left; font-size: 1.1rem; }
+        .rule-table th { background: var(--secondary); color: var(--accent); font-weight: 600; text-align: center; }
+
+        /* Fluxo */
+        .flow {
+            background: #f8fafc; padding: 2rem; border-radius: 10px; text-align: center;
+            font-family: 'Courier New', monospace; font-size: 1.1rem; font-weight: bold;
+            color: var(--dark); border: 2px dashed var(--accent); line-height: 2;
+        }
+
+        /* Mockup do App */
+        .layout-visual {
+            background: url('https://www.transparenttextures.com/patterns/stardust.png'), linear-gradient(135deg, #1e1e2e 0%, #0f0f1a 100%);
+            border-radius: 15px; padding: 3rem 2rem; position: relative; display: flex; justify-content: center;
+        }
+        .modern-app { background: #fdfdfd; border-radius: 15px; padding: 2.5rem; width: 100%; max-width: 500px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); border: 2px solid var(--accent); }
+        .app-header h2 { color: var(--danger); font-size: 1.6rem; margin-bottom: 1rem; text-align: center; font-family: 'Georgia', serif;}
+        
+        .question-box { background: #f0f0f5; padding: 15px; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--danger); }
+        .question-title { font-weight: bold; color: var(--secondary); margin-bottom: 10px; font-size: 1.1rem; }
+        .radio-option { display: block; margin-bottom: 8px; cursor: pointer; color: #444; }
+        
+        .calculate-btn {
+            width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--danger) 0%, #4a0000 100%);
+            color: var(--accent); border: none; border-radius: 8px; font-size: 1.2rem; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 2px;
+        }
+
+        /* Componentes */
+        .component-list { display: flex; flex-direction: column; gap: 1rem; }
+        .component-item { border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
+        .component-header { background: var(--light); padding: 1rem 1.5rem; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--dark); }
+        .component-props { padding: 0; display: none; }
+        .component-props.active { display: block; }
+        .props-table { width: 100%; border-collapse: collapse; }
+        .props-table td { padding: 0.8rem 1.5rem; border-bottom: 1px solid #e2e8f0; }
+        .props-table td:first-child { font-weight: 600; width: 35%; color: var(--secondary); background: #fff; }
+        .props-table td:last-child { background: #f8fafc; font-family: monospace; font-size: 1.05rem;}
+
+        /* Código */
+        .code-block { background: #1e1e1e; border-radius: 10px; overflow: hidden; }
+        .code-header { background: #2d2d2d; color: var(--accent); padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #404040; font-family: monospace; }
+        .code-content { padding: 1.5rem; overflow-x: auto; }
+        .code-content pre { margin: 0; font-family: 'Consolas', monospace; font-size: 0.95rem; line-height: 1.6; color: #ce9178; }
+        .code-content pre .keyword { color: #569cd6; } 
+        .code-content pre .comment { color: #6a9955; } 
+        .code-content pre .function { color: #dcdcaa; } 
+        
+        .copy-btn { background: var(--secondary); color: var(--accent); border: 1px solid var(--accent); padding: 0.5rem 1.2rem; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .copy-btn:hover { background: var(--accent); color: var(--dark); }
+
+        .summary-box { background: linear-gradient(135deg, var(--dark) 0%, var(--secondary) 100%); color: white; padding: 3rem; border-radius: 15px; text-align: center; border: 2px solid var(--accent); }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .summary-item { background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--accent); font-weight: 500; text-align: left; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🪄 ANVIL WORKS</h1>
+        <p>Guia Didático Completo - Quiz: Quem você seria em Hogwarts?</p>
+    </div>
+
+    <div class="container">
+        
+        <!-- ETAPA 1 -->
+        <div class="section">
+            <div class="section-title">
+                ✅ ETAPA 1 — REQUISITOS FUNCIONAIS
+                <span>O que o Quiz deve fazer</span>
+            </div>
+            <div class="section-content">
+                <div class="requirements-grid">
+                    <div class="card">
+                        <h3>📜 RF01 - Formulário</h3>
+                        <p>Apresentar 3 perguntas de múltipla escolha. O usuário só pode marcar <strong>uma</strong> opção por pergunta.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🧮 RF02 - Pontuação Oculta</h3>
+                        <p>Cada resposta escolhida deve somar 1 ponto "secreto" para um personagem específico.</p>
+                    </div>
+                    <div class="card">
+                        <h3>⚠️ RF03 - Validação</h3>
+                        <p>Se o usuário tentar descobrir o resultado sem responder todas as 3 perguntas, o sistema deve barrar e avisar.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🏆 RF04 - Resultado</h3>
+                        <p>Ao final, o sistema deve calcular quem teve mais pontos e exibir o personagem vencedor em um Pop-up!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 2 -->
+        <div class="section">
+            <div class="section-title">
+                📋 ETAPA 2 — REGRAS DE NEGÓCIO
+                <span>Mapeamento de Personalidade</span>
+            </div>
+            <div class="section-content">
+                <table class="rule-table">
+                    <thead>
+                        <tr><th>Pergunta</th><th>Opção Selecionada</th><th>Personagem que Ganha +1 Ponto</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td rowspan="4">1. O que você faz no tempo livre?</td><td>A) Pratico esportes / Exploro</td><td>⚡ Harry Potter (Coragem)</td></tr>
+                        <tr><td>B) Leio livros na biblioteca</td><td>📚 Hermione Granger (Inteligência)</td></tr>
+                        <tr><td>C) Como doces com os amigos</td><td>🍗 Ron Weasley (Lealdade)</td></tr>
+                        <tr><td>D) Planejo como ser o melhor</td><td>🐍 Draco Malfoy (Ambição)</td></tr>
+                        <tr style="background: #f4f4f9;"><td rowspan="4">2. Qual o seu maior medo?</td><td>A) Dementadores (Perder a alma)</td><td>⚡ Harry Potter</td></tr>
+                        <tr style="background: #f4f4f9;"><td>B) Tirar nota baixa nas provas</td><td>📚 Hermione Granger</td></tr>
+                        <tr style="background: #f4f4f9;"><td>C) Aranhas gigantes</td><td>🍗 Ron Weasley</td></tr>
+                        <tr style="background: #f4f4f9;"><td>D) Ser humilhado em público</td><td>🐍 Draco Malfoy</td></tr>
+                        <tr><td rowspan="4">3. Escolha um objeto mágico:</td><td>A) Capa da Invisibilidade</td><td>⚡ Harry Potter</td></tr>
+                        <tr><td>B) Vira-Tempo (Viajar no tempo)</td><td>📚 Hermione Granger</td></tr>
+                        <tr><td>C) Xadrez Bruxo</td><td>🍗 Ron Weasley</td></tr>
+                        <tr><td>D) Varinha das Varinhas (Poder)</td><td>🐍 Draco Malfoy</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ETAPA 3 -->
+        <div class="section">
+            <div class="section-title">
+                🔄 ETAPA 3 — FLUXO DO SISTEMA
+                <span>Lógica de Coleta e Análise</span>
+            </div>
+            <div class="section-content">
+                <div class="flow">
+                    Usuário marca as opções (RadioButtons)<br>
+                    ⬇<br>
+                    Clica em "Revelar Personagem"<br>
+                    ⬇<br>
+                    Python verifica se alguma pergunta ficou em branco<br>
+                    ⬇<br>
+                    Python cria um "Dicionário" zerado para os 4 personagens<br>
+                    ⬇<br>
+                    Python lê a Q1: Soma +1 no Dicionário correspondente<br>
+                    ⬇<br>
+                    Python lê a Q2 e Q3: Soma +1 nos respectivos<br>
+                    ⬇<br>
+                    Comando <code>max()</code> encontra quem teve a maior pontuação<br>
+                    ⬇<br>
+                    Exibe o Alerta (Pop-up) com a Revelação!
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 4 -->
+        <div class="section">
+            <div class="section-title">
+                🎨 ETAPA 4 — PROJETO DA INTERFACE
+                <span>Design do Formulário Dinâmico</span>
+            </div>
+            <div class="section-content">
+                <div class="layout-visual">
+                    <div class="modern-app">
+                        <div class="app-header">
+                            <h2>CHAPÉU SELETOR</h2>
+                        </div>
+
+                        <div class="question-box">
+                            <div class="question-title">1. O que você faz no tempo livre?</div>
+                            <label class="radio-option">⭕ A) Pratico esportes / Exploro</label>
+                            <label class="radio-option">🔘 B) Leio livros na biblioteca (Selecionado)</label>
+                            <label class="radio-option">⭕ C) Como doces com amigos</label>
+                            <label class="radio-option">⭕ D) Planejo como ser o melhor</label>
+                        </div>
+
+                        <div class="question-box">
+                            <div class="question-title">2. Qual o seu maior medo?</div>
+                            <label class="radio-option">⭕ ... opções de medo ...</label>
+                        </div>
+
+                        <div class="question-box">
+                            <div class="question-title">3. Escolha um objeto mágico:</div>
+                            <label class="radio-option">⭕ ... opções de objetos ...</label>
+                        </div>
+
+                        <button class="calculate-btn">🔮 REVELAR PERSONAGEM</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 5 -->
+        <div class="section">
+            <div class="section-title">
+                🧩 ETAPA 5 — COMPONENTES DO ANVIL
+                <span>⚠️ ATENÇÃO AO GROUP_NAME!</span>
+            </div>
+            <div class="section-content">
+                <p style="margin-bottom: 1rem; color: #666;"><em>O segredo do RadioButton é o <strong>group_name</strong>. Se os 4 botões da Pergunta 1 tiverem o mesmo group_name, o Anvil desmarca os outros automaticamente quando você clica em um!</em></p>
+                
+                <div class="component-list">
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            1️⃣ Botões da Pergunta 1 (RadioButton) <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Componentes</td><td>RadioButton (Criar 4 unidades)</td></tr>
+                                <tr><td>Names</td><td>rb_1a / rb_1b / rb_1c / rb_1d</td></tr>
+                                <tr><td>Text</td><td>As respostas correspondentes...</td></tr>
+                                <tr style="background: #fff3cd; color: #856404;"><td><strong>Group Name (IMPORTANTE)</strong></td><td><strong>q1</strong> (Coloque 'q1' nos 4 botões)</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            2️⃣ Botões da Pergunta 2 (RadioButton) <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Componentes</td><td>RadioButton (Criar 4 unidades)</td></tr>
+                                <tr><td>Names</td><td>rb_2a / rb_2b / rb_2c / rb_2d</td></tr>
+                                <tr style="background: #fff3cd; color: #856404;"><td><strong>Group Name (IMPORTANTE)</strong></td><td><strong>q2</strong> (Coloque 'q2' nos 4 botões)</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            3️⃣ Botões da Pergunta 3 (RadioButton) <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Componentes</td><td>RadioButton (Criar 4 unidades)</td></tr>
+                                <tr><td>Names</td><td>rb_3a / rb_3b / rb_3c / rb_3d</td></tr>
+                                <tr style="background: #fff3cd; color: #856404;"><td><strong>Group Name (IMPORTANTE)</strong></td><td><strong>q3</strong> (Coloque 'q3' nos 4 botões)</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            4️⃣ Botão de Ação (Button) <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Componente</td><td>Button</td></tr>
+                                <tr><td>Name</td><td>button_revelar</td></tr>
+                                <tr><td>Text</td><td>🔮 REVELAR PERSONAGEM</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 6 -->
+        <div class="section">
+            <div class="section-title">
+                ⚡ ETAPA 6 — CRIANDO O EVENTO
+                <span>Ligando o feitiço</span>
+            </div>
+            <div class="section-content">
+                <div class="card">
+                    <p>Ao contrário do jogo da velha, aqui nós <strong>NÃO</strong> colocamos eventos nos RadioButtons. O usuário pode mudar de ideia e clicar neles à vontade.</p>
+                    <p style="margin-top: 10px;">Só queremos saber a resposta final. Portanto, criamos o evento <code>click</code> <strong>apenas no Botão Revelar</strong>. Todo o código da Etapa 7 vai dentro da função deste único botão!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 7 -->
+        <div class="section">
+            <div class="section-title">
+                💻 ETAPA 7 — CÓDIGO PYTHON COMPLETO
+                <span>A Magia nos Bastidores - Copie e Cole</span>
+            </div>
+            <div class="section-content">
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>📄 form1.py</span>
+                        <button class="copy-btn" onclick="copyCode()">📋 Copiar Código</button>
+                    </div>
+                    <div class="code-content">
+                        <pre id="full-code" style="color: #d4d4d4;">
+<span class="keyword">from</span> anvil <span class="keyword">import</span> alert  <span class="comment"># Importação necessária para o Pop-up</span>
+
+<span class="keyword">class</span> Form1(Form1Template):
+  
+  <span class="keyword">def</span> <span class="function">__init__</span>(self, **properties):
+    self.init_components(**properties)
+
+  <span class="keyword">def</span> <span class="function">button_revelar_click</span>(self, **event_args):
+    
+    <span class="comment"># =========================
+    # 1. VALIDAÇÃO DE SEGURANÇA
+    # Garante que uma opção de cada grupo foi marcada
+    # (.selected retorna True se marcado, False se não)
+    # =========================</span>
+    
+    respondeu_q1 = self.rb_1a.selected <span class="keyword">or</span> self.rb_1b.selected <span class="keyword">or</span> self.rb_1c.selected <span class="keyword">or</span> self.rb_1d.selected
+    respondeu_q2 = self.rb_2a.selected <span class="keyword">or</span> self.rb_2b.selected <span class="keyword">or</span> self.rb_2c.selected <span class="keyword">or</span> self.rb_2d.selected
+    respondeu_q3 = self.rb_3a.selected <span class="keyword">or</span> self.rb_3b.selected <span class="keyword">or</span> self.rb_3c.selected <span class="keyword">or</span> self.rb_3d.selected
+    
+    <span class="keyword">if not</span> (respondeu_q1 <span class="keyword">and</span> respondeu_q2 <span class="keyword">and</span> respondeu_q3):
+        alert(<span style="color: #ce9178;">"⚠️ Por favor, responda todas as perguntas do Quiz!"</span>, title=<span style="color: #ce9178;">"Atenção"</span>)
+        <span class="keyword">return</span>  <span class="comment"># Interrompe o cálculo</span>
+
+    <span class="comment"># =========================
+    # 2. DICIONÁRIO DE PONTUAÇÃO
+    # Todos começam com ZERO pontos
+    # =========================</span>
+    
+    pontos = {
+        <span style="color: #ce9178;">"⚡ Harry Potter"</span>: 0,
+        <span style="color: #ce9178;">"📚 Hermione Granger"</span>: 0,
+        <span style="color: #ce9178;">"🍗 Ron Weasley"</span>: 0,
+        <span style="color: #ce9178;">"🐍 Draco Malfoy"</span>: 0
+    }
+
+    <span class="comment"># =========================
+    # 3. DISTRIBUIÇÃO DOS PONTOS
+    # Lendo as respostas e somando no Dicionário
+    # =========================</span>
+    
+    <span class="comment"># Pergunta 1</span>
+    <span class="keyword">if</span> self.rb_1a.selected: pontos[<span style="color: #ce9178;">"⚡ Harry Potter"</span>] += 1
+    <span class="keyword">elif</span> self.rb_1b.selected: pontos[<span style="color: #ce9178;">"📚 Hermione Granger"</span>] += 1
+    <span class="keyword">elif</span> self.rb_1c.selected: pontos[<span style="color: #ce9178;">"🍗 Ron Weasley"</span>] += 1
+    <span class="keyword">elif</span> self.rb_1d.selected: pontos[<span style="color: #ce9178;">"🐍 Draco Malfoy"</span>] += 1
+
+    <span class="comment"># Pergunta 2</span>
+    <span class="keyword">if</span> self.rb_2a.selected: pontos[<span style="color: #ce9178;">"⚡ Harry Potter"</span>] += 1
+    <span class="keyword">elif</span> self.rb_2b.selected: pontos[<span style="color: #ce9178;">"📚 Hermione Granger"</span>] += 1
+    <span class="keyword">elif</span> self.rb_2c.selected: pontos[<span style="color: #ce9178;">"🍗 Ron Weasley"</span>] += 1
+    <span class="keyword">elif</span> self.rb_2d.selected: pontos[<span style="color: #ce9178;">"🐍 Draco Malfoy"</span>] += 1
+
+    <span class="comment"># Pergunta 3</span>
+    <span class="keyword">if</span> self.rb_3a.selected: pontos[<span style="color: #ce9178;">"⚡ Harry Potter"</span>] += 1
+    <span class="keyword">elif</span> self.rb_3b.selected: pontos[<span style="color: #ce9178;">"📚 Hermione Granger"</span>] += 1
+    <span class="keyword">elif</span> self.rb_3c.selected: pontos[<span style="color: #ce9178;">"🍗 Ron Weasley"</span>] += 1
+    <span class="keyword">elif</span> self.rb_3d.selected: pontos[<span style="color: #ce9178;">"🐍 Draco Malfoy"</span>] += 1
+
+    <span class="comment"># =========================
+    # 4. DESCOBRINDO O VENCEDOR E EXIBINDO
+    # Função MAX procura a chave com o maior valor no Dicionário
+    # =========================</span>
+    
+    personagem_vencedor = max(pontos, key=pontos.get)
+    
+    mensagem = <span style="color: #ce9178;">f"O Chapéu Seletor analisou suas respostas!\n\nSua personalidade bate com:\n{personagem_vencedor}"</span>
+    
+    <span class="comment"># Dispara o Pop-up Final!</span>
+    alert(mensagem, title=<span style="color: #ce9178;">"🔮 RESULTADO DO QUIZ"</span>, large=<span class="keyword">True</span>)</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 8 -->
+        <div class="section">
+            <div class="section-title">
+                📖 ETAPA 8 — EXPLICAÇÃO DETALHADA DO CÓDIGO
+                <span>Entenda a lógica de um Quiz</span>
+            </div>
+            <div class="section-content">
+                <div class="requirements-grid">
+                    <div class="card">
+                        <h3>🔘 .selected (Verdadeiro ou Falso)</h3>
+                        <p>O TextBox possui a propriedade <code>.text</code>. Já o RadioButton possui a <code>.selected</code>. Se ele estiver marcado, o Python lê como <strong>True</strong>. Senão, <strong>False</strong>.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🛡️ Lógica do "OR" (Ou) na Validação</h3>
+                        <p><code>if a ou b ou c ou d:</code> - Isso significa: "Se PELO MENOS UM deles for True, a pergunta foi respondida". Se nenhum for True, o <code>if not</code> final trava a execução.</p>
+                    </div>
+                    <div class="card">
+                        <h3>📚 DICIONÁRIOS (Chave: Valor)</h3>
+                        <p>O <code>pontos = {"Harry": 0}</code> é um Dicionário. É uma das estruturas mais poderosas do Python! Criamos "Gavetas" com o nome do personagem, e guardamos o número "0" dentro delas.</p>
+                    </div>
+                    <div class="card">
+                        <h3>➕ SOMA NO DICIONÁRIO</h3>
+                        <p>Para somar pontos, acessamos a gaveta pelo nome dela e usamos o operador de incremento: <code>pontos["Harry"] += 1</code>.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🥇 A FUNÇÃO max()</h3>
+                        <p>A mágica acontece em: <code>max(pontos, key=pontos.get)</code>. Isso diz ao Python: "Olhe todas as gavetas dentro do Dicionário, descubra qual tem o maior número dentro, e me devolva a CHAVE (o nome) dessa gaveta."</p>
+                    </div>
+                    <div class="card">
+                        <h3>📝 Quebra de Linha em F-Strings</h3>
+                        <p>Na mensagem do alert, usamos <code>\n</code>. No Python, isso significa "Enter" (Pular linha). Isso deixa o texto do Pop-up muito mais organizado e bonito.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESUMO -->
+        <div class="summary-box">
+            <h2>🎯 RESUMO DO QUE VOCÊ APRENDEU</h2>
+            <p style="color: #d4af37; font-size: 1.1rem; margin-top: 5px;">Mestre dos Formulários e Dicionários</p>
+            
+            <div class="summary-grid">
+                <div class="summary-item">✅ Trabalhar com o componente RadioButton (.selected).</div>
+                <div class="summary-item">✅ Agrupar RadioButtons no painel visual usando group_name.</div>
+                <div class="summary-item">✅ Validar preenchimento total de formulários extensos.</div>
+                <div class="summary-item">✅ Construir e manipular Dicionários no Python.</div>
+                <div class="summary-item">✅ Incrementar valores (+=) dinamicamente baseado em escolhas.</div>
+                <div class="summary-item">✅ Usar funções built-in avançadas como o `max()` com `key`.</div>
+                <div class="summary-item">✅ Criar alertas nativos incríveis importando o `alert`.</div>
+            </div>
+            <p style="margin-top: 2.5rem; font-size: 1.2rem; font-weight: bold; color: white;">🚀 Feito-o-Mal-Feito-Feito! Seu app de personalidade está pronto para os bruxos (e trouxas) testarem!</p>
+        </div>
+    </div>
+
+    <script>
+        function toggleProps(header) {
+            const propsDiv = header.nextElementSibling;
+            propsDiv.classList.toggle('active');
+        }
+
+        function copyCode() {
+            const codeElement = document.getElementById('full-code');
+            const code = codeElement.innerText;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                alert('✅ Código copiado com sucesso!');
+            }).catch(err => {
+                console.error('Erro ao copiar: ', err);
+                alert('Erro ao copiar código. Pressione Ctrl+C manualmente.');
+            });
+        }
+    </script>
+</body>
+</html>
